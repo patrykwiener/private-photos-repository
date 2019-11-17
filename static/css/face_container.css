@@ -1,0 +1,69 @@
+.face_rect {
+    position: absolute;
+    background-color: black;
+}
+
+.my_container {
+    position: relative;
+    display: inline-block;
+}
+
+.face_popup-hide {
+    background-color: rgba(0, 0, 0, 0);
+    transition: all ease 0.3s;
+}
+
+.face_popup-hide:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.face_popup-hide:focus-within {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.face_popup-hide:focus input {
+    visibility: visible;
+}
+
+.face_popup-hide:hover input {
+    visibility: visible;
+}
+
+.face_popup-hide input {
+    visibility: hidden;
+    border: 0;
+    display: block;
+    margin: 40% auto;
+    transition: all ease 0.1s;
+}
+
+.face_popup-hide input:focus {
+    visibility: visible;
+    outline: none;
+    border: 0;
+    display: block;
+    margin: 40% auto;
+}
+
+.face_popup-hide input:hover {
+    visibility: visible;
+    outline: none;
+    border: 0;
+    display: block;
+    margin: 40% auto;
+}
+
+
+.face_input {
+    height: auto;
+    width: 95%;
+    text-align: center;
+    font-size: smaller;
+    left: auto;
+    color: white;
+    vertical-align: bottom;
+}
+
+.col-center {
+    margin: 0 auto;
+}

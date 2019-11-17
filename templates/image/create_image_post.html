@@ -1,0 +1,62 @@
+{% load mathfilters %}
+{% load list_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Image</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/face_container.css' %}"/>
+    <script src="{% static 'css/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
+
+</head>
+<body>
+<div class="w-75 p-3 col-center text-center">
+    {% include 'partials/messages.html' %}
+</div>
+<form action="." method="post">
+    <div class="col-center w-50 p-3">
+
+        <p>Image has been uploaded.</p>
+        <div class="text-center">
+            <div class="my_container">
+
+                <img class="img-fluid" src="{{ thumb.url }}" style="max-width: none;"/>
+
+                {% for field, face in form.visible_fields|zip:faces %}
+                    <div id="{{ field.auto_id }}" class="face_rect face_popup-hide input el" style="
+                            top: {{ face.location.0|sub_or_zero:5 }}px;
+                            left: {{ face.location.3|sub_or_zero:5 }}px;
+                            width: {{ face.location.1|sub:face.location.3|add:10 }}px;
+                            height: {{ face.location.2|sub:face.location.0|add:10 }}px;
+                            ">
+                        {{ field |add_css:"face_input" |add_css:"face_popup-hide" }}
+                    </div>
+                {% endfor %}
+
+                <div class="p-5">
+                    <input class="btn btn-primary" name="upload" type="submit" value="Upload an Image">
+                    <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel">
+                </div>
+
+            </div>
+
+
+            {% csrf_token %}
+
+        </div>
+    </div>
+</form>
+
+{% for face in faces %}
+    <p>{{ face.location }}</p>
+    {% if face.person %}
+        <p>{{ face.person.full_name }}</p>
+    {% else %}
+        <p>Unknown</p>
+    {% endif %}
+{% endfor %}
+
+</body>
+</html>
