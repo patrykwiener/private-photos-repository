@@ -10,7 +10,7 @@ class ImageUploadForm(forms.Form):
 class CreateImagePostForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        faces = kwargs.pop('faces')  # type: List[FaceModel]
+        faces = kwargs.pop('initial').pop('faces')  # type: List[FaceModel]
         super(CreateImagePostForm, self).__init__(*args, **kwargs)
         for face in faces:
             field_name = 'face_{}'.format(face.id)

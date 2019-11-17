@@ -1,98 +1,84 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.contrib import messages
-from django.views import View
+from django.views.generic.edit import FormView
 
 from apps.image.forms import ImageUploadForm, CreateImagePostForm
 from apps.image.models.face_model import FaceModel
 from apps.image.models.image_model import ImageModel
-from apps.image.models.recognized_person_model import RecognizedPersonModel
+from apps.image.services.create_image_post import CreateImagePost
 from apps.image.services.face_recognition.recognition import Recognition
 from apps.image.services.upload_image import UploadImage
 
 
-class UploadImageBaseView(View):
+class UploadImageBase:
     @staticmethod
     def get_draft_if_exists():
         return ImageModel.objects.filter(status=ImageModel.DRAFT)
 
 
-class UploadImageView(UploadImageBaseView):
+class UploadImageView(UploadImageBase, FormView):
     form_class = ImageUploadForm
     template_name = 'image/upload.html'
-    create_image_post_url = '/image/create-image-post'
+    success_url = '/image/create-image-post'
 
-    def get(self, request):
+    def dispatch(self, request, *args, **kwargs):
         if self.get_draft_if_exists():
-            return redirect(self.create_image_post_url)
-        form = self.form_class()
-        return render(request, self.template_name, {
-            'form': form,
-        })
+            return redirect(self.get_success_url())
+        return super(UploadImageView, self).dispatch(request, *args, **kwargs)
 
-    def post(self, request):
-        if self.get_draft_if_exists():
-            return redirect(self.create_image_post_url)
-        form = ImageUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            image = form.cleaned_data['image']
-            image_model = UploadImage(image).create_draft()
-            Recognition(image_model).execute()
-
-            return redirect(self.create_image_post_url)
-        else:
-            messages.error(request, 'Whoops... Check provided information.')
-        return render(request, self.template_name, {
-            'form': form,
-        })
+    def form_valid(self, form):
+        image = form.cleaned_data['image']
+        image_model = UploadImage(image).create_draft()
+        Recognition(image_model).execute()
+        return super(UploadImageView, self).form_valid(form)
 
 
-class CreateImagePostView(UploadImageBaseView):
+class CreateImagePostView(UploadImageBase, FormView):
     form_class = CreateImagePostForm
-    template_name = '/image/create_image_post.html'
-    upload_image_url = '/image/upload-image'
+    template_name = 'image/create_image_post.html'
+    success_url = '/image/upload-image'
 
-    def get(self, request):
-        image_model_query = self.get_draft_if_exists()
-        if not image_model_query:
-            return redirect(self.upload_image_url)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._image_model = None
+        self._faces = None
 
-        image_model = image_model_query.first()
-        faces = FaceModel.objects.filter(image=image_model)
+    def obtain_context_attrs(self):
+        self._image_model = self.get_draft_if_exists().first()
+        self._faces = FaceModel.objects.filter(image=self._image_model)
 
-        form = CreateImagePostForm(faces=faces)
+    def setup_form_view_attrs(self):
+        self.initial = {
+            'faces': self._faces
+        }
+        self.extra_context = {
+            'faces': self._faces,
+            'thumb': self._image_model.thumbnail
+        }
 
-        return render(request, 'image/create_image_post.html', {
-            'thumb': image_model.thumbnail,
-            'faces': faces,
-            'form': form,
-        })
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.obtain_context_attrs()
 
-    def post(self, request):
-        image_model_query = self.get_draft_if_exists()
-        if image_model_query:
-            image_model = image_model_query.first()
-            faces = FaceModel.objects.filter(image=image_model)
-            if 'cancel' in request.POST:
-                image_model.delete()
-            elif 'upload' in request.POST:
-                form = CreateImagePostForm(request.POST, faces=faces)
-                if form.is_valid():
-                    for face in faces:
-                        field_name = 'face_{}'.format(face.id)
-                        face_name = form.cleaned_data[field_name]
-                        face_name = ' '.join(face_name.split())
-                        person = None
-                        if face_name != "":
-                            person, _ = RecognizedPersonModel.objects.get_or_create(full_name=face_name,
-                                                                                    defaults={
-                                                                                        'full_name': face_name
-                                                                                    })
-                        if face.person != person:
-                            face.person = person
-                            face.save()
+    def dispatch(self, request, *args, **kwargs):
+        if not self._image_model:
+            return redirect(self.get_success_url())
+        self.setup_form_view_attrs()
+        return super(CreateImagePostView, self).dispatch(request, *args, **kwargs)
 
-                    image_model.status = ImageModel.PUBLISHED
-                    image_model.save()
-                else:
-                    messages.error(request, 'Whoops... Check provided information.')
-        return redirect(self.upload_image_url)
+    def post(self, request, *args, **kwargs):
+        if 'cancel' in request.POST:
+            self._image_model.delete()
+            return redirect(self.get_success_url())
+        elif 'upload' in request.POST:
+            post_result = super(CreateImagePostView, self).post(request, *args, **kwargs)
+            messages.success(request, 'The post has been created!')
+            return post_result
+
+    def form_valid(self, form):
+        for face in self._faces:
+            field_name = 'face_{}'.format(face.id)
+            face_name = form.cleaned_data[field_name]
+            CreateImagePost.save_recognized_face(face, face_name)
+        CreateImagePost.publish(self._image_model)
+        return super(CreateImagePostView, self).form_valid(form)
