@@ -4,44 +4,56 @@ from typing import Tuple
 
 import cv2
 import numpy as np
-from PIL import Image, ExifTags
+from PIL import Image
 from django.core.files.base import ContentFile
+
+from apps.image.services.image_processing.picture_exif_info import PictureExifInfo
 
 
 class Picture:
 
-    def __init__(self, image: Image, file_format, size):
+    def __init__(self, image, file_format, size):
         self._picture = deepcopy(image)  # type: Image
         self._file_format = file_format
+        self._exif_info = PictureExifInfo.create(image)
         self._picture.thumbnail(size, Image.ANTIALIAS)
         self._original_size = image.size  # type: Tuple[int]
 
-    @staticmethod
-    def rotate(image):
+    def rotate_when_turned(self):
+        image = self._picture
+        if self._exif_info:
+            orientation = self._exif_info.orientation
+            if orientation:
+                try:
+                    if orientation == 3:
+                        image = self._picture.rotate(180, expand=True)
+                    elif orientation == 6:
+                        image = self._picture.rotate(270, expand=True)
+                    elif orientation == 8:
+                        image = self._picture.rotate(90, expand=True)
+                except KeyError:
+                    pass
+        return image
 
-        orientation = list(ExifTags.TAGS.keys())[list(ExifTags.TAGS.values()).index('Orientation')]
-        exif = image._getexif()
-        if exif:
-            try:
-                if exif[orientation] == 3:
-                    image = image.rotate(180, expand=True)
-                elif exif[orientation] == 6:
-                    image = image.rotate(270, expand=True)
-                elif exif[orientation] == 8:
-                    image = image.rotate(90, expand=True)
-            except KeyError:
-                pass
+    @staticmethod
+    def convert_to_rgb(image):
+        rgb = 'RGB'
+        if image.mode != rgb:
+            image = image.convert(rgb)
         return image
 
     @classmethod
     def create_pic(cls, image, size=None):
         with Image.open(image) as image:
             file_format = image.format
-            rgb = 'RGB'
-            if image.mode != rgb:
-                image = image.convert(rgb)
-            image = cls.rotate(image)
-            return cls(image, file_format, size)
+            image = cls.convert_to_rgb(image)
+            instance = cls(image, file_format, size)
+            instance._picture = instance.rotate_when_turned()
+            return instance
+
+    @property
+    def exif_info(self):
+        return self._exif_info
 
     @property
     def file_format(self):

@@ -125,9 +125,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'static/'),
 )
-
 
 MEDIA_ROOT = 'C:/Development/Python/private_photos_repository/media/'
 MEDIA_URL = '/media/'

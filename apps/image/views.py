@@ -6,7 +6,7 @@ from apps.image.forms import ImageUploadForm, CreateImagePostForm
 from apps.image.models.face_model import FaceModel
 from apps.image.models.image_model import ImageModel
 from apps.image.services.create_image_post import CreateImagePost
-from apps.image.services.face_recognition.recognition import Recognition
+from apps.image.services.image_processing.recognition import Recognition
 from apps.image.services.upload_image import UploadImage
 
 
