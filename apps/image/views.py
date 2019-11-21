@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.views.generic.edit import FormView
 
-from apps.image.forms import ImageUploadForm, CreateImagePostForm
+from apps.image.forms import ImageUploadForm, CreateImagePostFacesForm
 from apps.image.models.face_model import FaceModel
 from apps.image.models.image_model import ImageModel
 from apps.image.services.create_image_post import CreateImagePost
@@ -34,7 +34,7 @@ class UploadImageView(UploadImageBase, FormView):
 
 
 class CreateImagePostView(UploadImageBase, FormView):
-    form_class = CreateImagePostForm
+    form_class = CreateImagePostFacesForm
     template_name = 'image/create_image_post.html'
     success_url = '/image/upload-image'
 
@@ -53,7 +53,9 @@ class CreateImagePostView(UploadImageBase, FormView):
         }
         self.extra_context = {
             'faces': self._faces,
-            'thumb': self._image_model.thumbnail
+            'thumb': self._image_model.thumbnail,
+            'latitude': self._image_model.latitude,
+            'longitude': self._image_model.longitude,
         }
 
     def setup(self, request, *args, **kwargs):

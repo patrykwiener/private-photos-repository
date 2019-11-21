@@ -8,23 +8,74 @@
     <title>Upload Image</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/face_container.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/map.css' %}"/>
     <script src="{% static 'css/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
+    <script>
+        var marker;
 
+        function initMap() {
+            var lat = "{{ latitude }}";
+            var lng = "{{ longitude }}";
+            var placeMarker = true;
+            var zoom = 9;
+            if (lat === "None" || lng === "None") {
+                lat = 50.3785;
+                lng = 14.9706;
+                placeMarker = false;
+                zoom = 4;
+            }
+            var position = {lat: lat, lng: lng};
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: position,
+                zoom: zoom,
+                streetViewControl: false
+            });
+            if (placeMarker) {
+                placeMarkerAndPanTo(position, map);
+            }
+            map.addListener('click', function (e) {
+                placeMarkerAndPanTo(e.latLng, map);
+            });
+        }
+
+        function placeMarkerAndPanTo(position, map) {
+            if (marker) {
+                marker.setPosition(position);
+            } else {
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    draggable: true
+                });
+            }
+            map.panTo(position);
+        }
+
+        function getMarkerPosition() {
+            if (marker) {
+                console.log(marker.lat());
+                console.log(marker.lng());
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8L1pvQjk6yfaK8EbkdlAqLvRAJewSCXE&callback=initMap"
+            async defer></script>
 </head>
 <body>
 <div class="w-75 p-3 col-center text-center">
     {% include 'partials/messages.html' %}
 </div>
-<form action="." method="post">
-    <div class="col-center w-50 p-3">
 
+<div class="col-center w-50 p-3" style="height:100%; width: 100%;">
+    <form action="." method="post">
         <p>Image has been uploaded.</p>
         <div class="text-center">
+
             <div class="my_container">
 
-                <img class="img-fluid" src="{{ thumb.url }}" style="max-width: none;"/>
+                <img class="img-fluid" src="{{ thumb.url }}"/>
 
-                {% for field, face in form.visible_fields|zip:faces %}
+                {% for field, face in form.get_faces|zip:faces %}
                     <div id="{{ field.auto_id }}" class="face_rect face_popup-hide input el" style="
                             top: {{ face.location.0|sub_or_zero:5 }}px;
                             left: {{ face.location.3|sub_or_zero:5 }}px;
@@ -35,19 +86,26 @@
                     </div>
                 {% endfor %}
 
+
+
                 <div class="p-5">
                     <input class="btn btn-primary" name="upload" type="submit" value="Upload an Image">
-                    <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel">
+                    <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel"
+                           onclick="getMarkerPosition()">
                 </div>
 
             </div>
 
 
-            {% csrf_token %}
-
         </div>
-    </div>
-</form>
+
+        {% csrf_token %}
+    </form>
+    <div class="" id="map"></div>
+
+    <p>{{ latitude }} {{ longitude }}</p>
+</div>
+
 
 {% for face in faces %}
     <p>{{ face.location }}</p>
@@ -56,7 +114,9 @@
     {% else %}
         <p>Unknown</p>
     {% endif %}
+
 {% endfor %}
+
 
 </body>
 </html>

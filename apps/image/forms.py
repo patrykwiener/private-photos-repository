@@ -7,11 +7,11 @@ class ImageUploadForm(forms.Form):
     image = forms.ImageField(max_length=255)
 
 
-class CreateImagePostForm(forms.Form):
+class CreateImagePostFacesForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         faces = kwargs.pop('initial').pop('faces')  # type: List[FaceModel]
-        super(CreateImagePostForm, self).__init__(*args, **kwargs)
+        super(CreateImagePostFacesForm, self).__init__(*args, **kwargs)
         for face in faces:
             field_name = 'face_{}'.format(face.id)
             self.fields[field_name] = forms.CharField(max_length=100,
@@ -20,3 +20,6 @@ class CreateImagePostForm(forms.Form):
                                                       widget=forms.TextInput(attrs={'autocomplete': 'off',
                                                                                     'spellcheck': 'false'}),
                                                       )
+
+    def get_faces(self):
+        return [field for field in self if 'face_' in field.name]
