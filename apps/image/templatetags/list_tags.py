@@ -1,4 +1,6 @@
 from django import template
+import markdown
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -27,3 +29,8 @@ def add_css(value, arg):
 @register.filter(name='sub_or_zero')
 def sub_or_zero(a, b):
     return a - b if a > b else 0
+
+
+@register.filter(name='markdown')
+def markdown_format(text):
+    return mark_safe(markdown.markdown(text))

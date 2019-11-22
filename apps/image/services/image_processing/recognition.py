@@ -42,7 +42,7 @@ class Recognition:
         return faces
 
     @classmethod
-    def recognize_faces(cls, known_faces, faces: List[FaceModel], tolerance=0.55) -> List[FaceModel]:
+    def recognize_faces(cls, known_faces, faces: List[FaceModel], tolerance=0.5) -> List[FaceModel]:
         faces = deepcopy(faces)
         for face in faces:
             recognition_result = cls.compare_with_unknown(known_faces, face, tolerance)

@@ -9,8 +9,8 @@ from django.utils.timezone import is_aware, make_aware
 
 class UploadImage:
 
-    def __init__(self, image):
-        self._image = image
+    def __init__(self, data):
+        self._image = data['image']
         self._image_model = ImageModel()
 
     def create_draft(self):
@@ -25,6 +25,8 @@ class UploadImage:
         return self._image_model
 
     def _add_gps_coordinates(self, pic):
+        if not pic.exif_info:
+            return None
         latitude, longitude = pic.exif_info.coordinates
 
         if latitude and longitude:
@@ -38,6 +40,8 @@ class UploadImage:
             self._image_model.thumbnail.save(thumbnail_name, thumbnail)
 
     def _add_image_taken_date_time(self, pic):
+        if not pic.exif_info:
+            return None
         date_time = pic.exif_info.date_time
 
         if date_time:

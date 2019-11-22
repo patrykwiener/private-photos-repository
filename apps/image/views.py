@@ -27,8 +27,8 @@ class UploadImageView(UploadImageBase, FormView):
         return super(UploadImageView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        image = form.cleaned_data['image']
-        image_model = UploadImage(image).create_draft()
+        data = form.cleaned_data
+        image_model = UploadImage(data).create_draft()
         Recognition(image_model).execute()
         return super(UploadImageView, self).form_valid(form)
 
@@ -49,13 +49,14 @@ class CreateImagePostView(UploadImageBase, FormView):
 
     def setup_form_view_attrs(self):
         self.initial = {
-            'faces': self._faces
+            'faces': self._faces,
+            'latitude': self._image_model.latitude,
+            'longitude': self._image_model.longitude,
         }
         self.extra_context = {
             'faces': self._faces,
             'thumb': self._image_model.thumbnail,
-            'latitude': self._image_model.latitude,
-            'longitude': self._image_model.longitude,
+            'date_time_taken': self._image_model.date_time_taken,
         }
 
     def setup(self, request, *args, **kwargs):
@@ -74,13 +75,13 @@ class CreateImagePostView(UploadImageBase, FormView):
             return redirect(self.get_success_url())
         elif 'upload' in request.POST:
             post_result = super(CreateImagePostView, self).post(request, *args, **kwargs)
-            messages.success(request, 'The post has been created!')
             return post_result
 
     def form_valid(self, form):
-        for face in self._faces:
-            field_name = 'face_{}'.format(face.id)
-            face_name = form.cleaned_data[field_name]
-            CreateImagePost.save_recognized_face(face, face_name)
-        CreateImagePost.publish(self._image_model)
+        CreateImagePost(self._image_model, self._faces, form.cleaned_data).execute()
+        messages.success(self.request, 'The post has been created!')
         return super(CreateImagePostView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Oops! Something went wrong. Check your inputs!')
+        return super(CreateImagePostView, self).form_invalid(form)

@@ -1,79 +1,35 @@
 {% load mathfilters %}
 {% load list_tags %}
 {% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Upload Image</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
+
+    <link type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
+          rel="stylesheet">
+
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/face_container.css' %}"/>
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/map.css' %}"/>
-    <script src="{% static 'css/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
-    <script>
-        var marker;
-
-        function initMap() {
-            var lat = "{{ latitude }}";
-            var lng = "{{ longitude }}";
-            var placeMarker = true;
-            var zoom = 9;
-            if (lat === "None" || lng === "None") {
-                lat = 50.3785;
-                lng = 14.9706;
-                placeMarker = false;
-                zoom = 4;
-            }
-            var position = {lat: lat, lng: lng};
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: position,
-                zoom: zoom,
-                streetViewControl: false
-            });
-            if (placeMarker) {
-                placeMarkerAndPanTo(position, map);
-            }
-            map.addListener('click', function (e) {
-                placeMarkerAndPanTo(e.latLng, map);
-            });
-        }
-
-        function placeMarkerAndPanTo(position, map) {
-            if (marker) {
-                marker.setPosition(position);
-            } else {
-                marker = new google.maps.Marker({
-                    position: position,
-                    map: map,
-                    draggable: true
-                });
-            }
-            map.panTo(position);
-        }
-
-        function getMarkerPosition() {
-            if (marker) {
-                console.log(marker.lat());
-                console.log(marker.lng());
-            }
-        }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8L1pvQjk6yfaK8EbkdlAqLvRAJewSCXE&callback=initMap"
-            async defer></script>
+    <link type="text/css" href="{% static 'emoji/css/emoji.css' %}" rel="stylesheet">
 </head>
 <body>
 <div class="w-75 p-3 col-center text-center">
     {% include 'partials/messages.html' %}
 </div>
 
-<div class="col-center w-50 p-3" style="height:100%; width: 100%;">
-    <form action="." method="post">
-        <p>Image has been uploaded.</p>
+<div class="col-center w-75 p-3" style="height:100%; width: 100%;">
+    <form action="." method="post" onsubmit="getMarkerPosition()">
         <div class="text-center">
 
             <div class="my_container">
 
-                <img class="img-fluid" src="{{ thumb.url }}"/>
+                <img class="img-fluid" src="{{ thumb.url }}" style="max-width: none;"/>
 
                 {% for field, face in form.get_faces|zip:faces %}
                     <div id="{{ field.auto_id }}" class="face_rect face_popup-hide input el" style="
@@ -86,37 +42,63 @@
                     </div>
                 {% endfor %}
 
-
-
                 <div class="p-5">
-                    <input class="btn btn-primary" name="upload" type="submit" value="Upload an Image">
-                    <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel"
-                           onclick="getMarkerPosition()">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+
+                                <div class="text-left">
+                                    <p class="lead emoji-picker-container">
+                                        {% render_field form.body rows="3" placeholder="Write down your memories!" data-emojiable="true" data-emoji-input="unicode" class="form-control textarea-control" %}
+                                    </p>
+                                </div>
+{#                                {% if form.date_time_taken == None %}#}
+                                    <p>{{ form.date_taken }}</p>
+{#                                {% endif %}#}
+
+                                <div id="map"></div>
+
+                            </div>
+
+                            <div class="p-5">
+                                <input class="btn btn-primary" name="upload" type="submit" value="Upload">
+                                <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-
-
         </div>
 
         {% csrf_token %}
+        {{ form.latitude.as_hidden }}
+        {{ form.longitude.as_hidden }}
     </form>
-    <div class="" id="map"></div>
 
-    <p>{{ latitude }} {{ longitude }}</p>
 </div>
 
-
-{% for face in faces %}
-    <p>{{ face.location }}</p>
-    {% if face.person %}
-        <p>{{ face.person.full_name }}</p>
-    {% else %}
-        <p>Unknown</p>
-    {% endif %}
-
-{% endfor %}
-
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{% static 'css/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/map.js' %}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8L1pvQjk6yfaK8EbkdlAqLvRAJewSCXE&callback=initMap"
+        async defer></script>
+<script src={% static 'emoji/js/config.js' %}></script>
+<script src={% static 'emoji/js/util.js' %}></script>
+<script src={% static 'emoji/js/jquery.emojiarea.js' %}></script>
+<script src={% static 'emoji/js/emoji-picker.js' %}></script>
+<script>
+    $(function () {
+        // Initializes and creates emoji set from sprite sheet
+        window.emojiPicker = new EmojiPicker({
+            emojiable_selector: '[data-emojiable=true]',
+            assetsPath: '/static/emoji/img',
+            popupButtonClasses: 'fa fa-smile-o'
+        });
+        // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
+        // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
+        // It can be called as many times as necessary; previously converted input fields will not be converted again
+        window.emojiPicker.discover();
+    });
+</script>
 </body>
 </html>

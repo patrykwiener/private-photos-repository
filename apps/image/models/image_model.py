@@ -1,7 +1,4 @@
-import datetime
-
 from django.db import models
-from django.utils.timezone import now
 
 
 class ImageModel(models.Model):
@@ -24,3 +21,5 @@ class ImageModel(models.Model):
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,
                               default=DRAFT)
+
+    body = models.TextField(max_length=1024, default="")
