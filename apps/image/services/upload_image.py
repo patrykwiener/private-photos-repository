@@ -49,7 +49,7 @@ class UploadImage:
             date_time_list = parse_datetime(date_time)
             if not is_aware(date_time_list):
                 date_time_list = make_aware(date_time_list)
-            self._image_model.date_time_taken = date_time_list
+            self._image_model.datetime_taken = date_time_list
 
     def _add_image(self):
         self._image_model.image = self._image

@@ -56,7 +56,7 @@ class CreateImagePostView(UploadImageBase, FormView):
         self.extra_context = {
             'faces': self._faces,
             'thumb': self._image_model.thumbnail,
-            'date_time_taken': self._image_model.date_time_taken,
+            'date_time_taken': self._image_model.datetime_taken,
         }
 
     def setup(self, request, *args, **kwargs):

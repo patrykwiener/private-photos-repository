@@ -2,6 +2,7 @@
 {% load list_tags %}
 {% load static %}
 {% load widget_tweaks %}
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +11,9 @@
 
     <link type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
           rel="stylesheet">
-
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-4.3.1-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/face_container.css' %}"/>
-
     <link rel="stylesheet" type="text/css" href="{% static 'css/map.css' %}"/>
     <link type="text/css" href="{% static 'emoji/css/emoji.css' %}" rel="stylesheet">
 </head>
@@ -38,35 +37,40 @@
                             width: {{ face.location.1|sub:face.location.3|add:10 }}px;
                             height: {{ face.location.2|sub:face.location.0|add:10 }}px;
                             ">
-                        {{ field |add_css:"face_input" |add_css:"face_popup-hide" }}
+                        {% render_field field class="face_input face_popup-hide" %}
                     </div>
                 {% endfor %}
 
-                <div class="p-5">
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-12">
+            </div>
 
-                                <div class="text-left">
-                                    <p class="lead emoji-picker-container">
-                                        {% render_field form.body rows="3" placeholder="Write down your memories!" data-emojiable="true" data-emoji-input="unicode" class="form-control textarea-control" %}
-                                    </p>
-                                </div>
-{#                                {% if form.date_time_taken == None %}#}
-                                    <p>{{ form.date_taken }}</p>
-{#                                {% endif %}#}
+        </div>
+        <div class="p-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12" style="max-width: none;">
 
-                                <div id="map"></div>
+                        <div class="text-left">
+                            {% if date_time_taken == None %}
+                                {{ form.datetime_taken|as_crispy_field }}
+                            {% endif %}
 
+                            <div class="lead emoji-picker-container form-group">
+                                {% render_field form.body rows="5" placeholder="Write down your memories!" data-emojiable="true" data-emoji-input="unicode" class="form-control textarea-control" %}
                             </div>
 
-                            <div class="p-5">
-                                <input class="btn btn-primary" name="upload" type="submit" value="Upload">
-                                <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel">
-                            </div>
+                            <div class="p-3 form-group" id="map" style="height: 400px"></div>
+
                         </div>
+                        <div class="form-group text-center">
+                            <input class="btn btn-primary" name="upload" type="submit" value="Upload">
+                            <input class="btn btn-secondary" name="cancel" type="submit" value="Cancel"
+                                   formnovalidate>
+                        </div>
+
                     </div>
+
                 </div>
+
             </div>
         </div>
 
@@ -77,8 +81,16 @@
 
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="{% static 'css/bootstrap-4.3.1-dist/js/bootstrap.min.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>
 <script src="{% static 'js/map.js' %}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8L1pvQjk6yfaK8EbkdlAqLvRAJewSCXE&callback=initMap"
         async defer></script>
@@ -86,6 +98,7 @@
 <script src={% static 'emoji/js/util.js' %}></script>
 <script src={% static 'emoji/js/jquery.emojiarea.js' %}></script>
 <script src={% static 'emoji/js/emoji-picker.js' %}></script>
+
 <script>
     $(function () {
         // Initializes and creates emoji set from sprite sheet
@@ -100,5 +113,6 @@
         window.emojiPicker.discover();
     });
 </script>
+
 </body>
 </html>

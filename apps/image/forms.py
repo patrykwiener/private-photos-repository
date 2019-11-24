@@ -31,7 +31,9 @@ class CreateImagePostFacesForm(forms.Form):
                                                       initial=initial['longitude'])
 
     body = forms.CharField(widget=forms.Textarea(), max_length=1024, required=False)
-    date_taken = forms.DateField(required=True)
+    datetime_taken = forms.DateTimeField(label='Date time taken', required=True,
+                                         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+                                         input_formats=['%Y-%m-%dT%H:%M'])
 
     def get_faces(self):
         return [field for field in self if 'face_' in field.name]

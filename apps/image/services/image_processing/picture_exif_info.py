@@ -68,6 +68,8 @@ class PictureExifInfo:
     @property
     def date_time(self):
         date_time_original_number_tag = 36867
-        if not self.get_tag(date_time_original_number_tag):
+        date_time = self.get_tag(date_time_original_number_tag)
+        if not date_time:
             date_time_original_string_tag = 'DateTimeOriginal'
-            return self.get_tag(date_time_original_string_tag)
+            date_time = self.get_tag(date_time_original_string_tag)
+        return date_time

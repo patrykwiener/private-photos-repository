@@ -1,3 +1,6 @@
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import is_aware, make_aware
+
 from apps.image.models.image_model import ImageModel
 from apps.image.models.recognized_person_model import RecognizedPersonModel
 
@@ -28,6 +31,7 @@ class CreateImagePost:
         self.save_recognized_face()
         self.publish()
         self.add_location()
+        self.add_datetime_taken()
         self.add_body()
         self._image_model.save()
 
@@ -43,3 +47,6 @@ class CreateImagePost:
 
     def add_body(self):
         self._image_model.body = self._cleaned_data['body']
+
+    def add_datetime_taken(self):
+        self._image_model.datetime_taken = self._cleaned_data['datetime_taken']
