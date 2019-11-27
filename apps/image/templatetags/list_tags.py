@@ -7,6 +7,8 @@ register = template.Library()
 
 @register.filter(name='zip')
 def zip_lists(a, b):
+    a = list(a)
+    b = list(b)
     return zip(a, b)
 
 

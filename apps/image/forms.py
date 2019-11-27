@@ -1,14 +1,26 @@
 from django import forms
+from taggit.forms import TagField, TagWidget
+
+from apps.image.models.image_model import ImageModel
 
 
 class ImageUploadForm(forms.Form):
     image = forms.ImageField(max_length=255)
 
 
-class CreateImagePostFacesForm(forms.Form):
+class CreateImagePostForm(forms.ModelForm):
+    class Meta:
+        model = ImageModel
+        fields = (
+            'tags',
+            'datetime_taken',
+            'body',
+            'latitude',
+            'longitude',
+        )
 
     def __init__(self, *args, **kwargs):
-        super(CreateImagePostFacesForm, self).__init__(*args, **kwargs)
+        super(CreateImagePostForm, self).__init__(*args, **kwargs)
         initial = kwargs['initial']
 
         for face in initial['faces']:
@@ -31,9 +43,14 @@ class CreateImagePostFacesForm(forms.Form):
                                                       initial=initial['longitude'])
 
     body = forms.CharField(widget=forms.Textarea(), max_length=1024, required=False)
-    datetime_taken = forms.DateTimeField(label='Date time taken', required=True,
+    datetime_taken = forms.DateTimeField(label='Date time taken', required=False,
                                          widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
                                          input_formats=['%Y-%m-%dT%H:%M'])
+
+    tags = TagField(required=False, widget=TagWidget(attrs={
+        'class': 'form-control',
+        'data-role': 'tagsinput',
+    }))
 
     def get_faces(self):
         return [field for field in self if 'face_' in field.name]

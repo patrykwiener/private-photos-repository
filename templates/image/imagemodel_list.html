@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+    <div class="">
+        {% for object in object_list %}
+            <div class="">
+                <img class="img-fluid" src="{{ object.thumbnail.url }}" style="max-width: none;"/>
+                <a href="{% url 'image:image-detail' object.slug %}" class="btn btn-primary">
+                            <span class="fas fa-eye" aria-hidden="true"></span>
+                            <span><strong>View</strong></span>
+                        </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

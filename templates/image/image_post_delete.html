@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Image{% endblock %}
+
+{% block content %}
+    {% include 'image/image_with_faces.html' %}
+    <br>
+
+            <div class="card card-block">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="form-group text-center p-3">
+                        <h3>Are you sure you want to delete the image?</h3>
+                        <br>
+                        <button name="delete" type="submit" value="Delete" class="btn btn-danger a-btn-slide-text">
+                            <span class="fas fa-minus-circle" aria-hidden="true"></span>
+                            <span><strong>Delete</strong></span>
+                        </button>
+                        <a href="{% url 'image:image-detail' object.slug %}" class="btn btn-secondary">
+                            <span class="fas fa-times-circle" aria-hidden="true"></span>
+                            <span><strong>Cancel</strong></span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+{% endblock %}

@@ -1,0 +1,10 @@
+.form-control::-webkit-input-placeholder {
+    color: #9aa2ab
+}
+
+.date {
+    color: #ccc;
+    font-family: georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+}

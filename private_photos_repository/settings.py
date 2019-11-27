@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'mathfilters',
     'crispy_forms',
-    'widget_tweaks'
+    'widget_tweaks',
+    'taggit',
+    'taggit_labels',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

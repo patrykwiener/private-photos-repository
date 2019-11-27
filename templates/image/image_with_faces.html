@@ -1,0 +1,40 @@
+{% load mathfilters %}
+{% load list_tags %}
+{% load widget_tweaks %}
+
+<div class="text-center">
+
+    <div class="my_container">
+
+        <img class="img-fluid" src="{{ object.thumbnail.url }}" style="max-width: none;"/>
+        {% if form == None %}
+            {% for face in object.facemodel_set.all %}
+                <div id="{{ field.auto_id }}" class="face_rect face_popup-hide input el" style="
+                        top: {{ face.location.0|sub_or_zero:5 }}px;
+                        left: {{ face.location.3|sub_or_zero:5 }}px;
+                        width: {{ face.location.1|sub:face.location.3|add:10 }}px;
+                        height: {{ face.location.2|sub:face.location.0|add:10 }}px;
+                        ">
+                    {% if face.person == None %}
+                        <input class="face_input face_popup-hide" type="text" value="" readonly>
+                    {% else %}
+                        <input class="face_input face_popup-hide" type="text" value="{{ face.person }}" readonly>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            {% for field, face in form.get_faces|zip:object.facemodel_set.all %}
+                <div id="{{ field.auto_id }}" class="face_rect face_popup-hide input el" style="
+                        top: {{ face.location.0|sub_or_zero:5 }}px;
+                        left: {{ face.location.3|sub_or_zero:5 }}px;
+                        width: {{ face.location.1|sub:face.location.3|add:10 }}px;
+                        height: {{ face.location.2|sub:face.location.0|add:10 }}px;
+                        ">
+                    {% render_field field class="face_input face_popup-hide" %}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+</div>

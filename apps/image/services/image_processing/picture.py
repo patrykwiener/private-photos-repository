@@ -73,7 +73,7 @@ class Picture:
 
 
 class Thumbnail(Picture):
-    MAX_SIZE = (1000, 1000)
+    MAX_SIZE = (850, 850)
 
     def __init__(self, image: Image, file_format, size=None):
         if size is None:
