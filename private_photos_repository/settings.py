@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'mathfilters',
     'crispy_forms',
+    'widget_tweaks',
+    'taggit',
+    'taggit_labels',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -125,9 +128,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'static/'),
 )
-
 
 MEDIA_ROOT = 'C:/Development/Python/private_photos_repository/media/'
 MEDIA_URL = '/media/'

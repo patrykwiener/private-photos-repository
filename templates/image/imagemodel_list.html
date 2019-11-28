@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load list_tags %}
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+    <div class="text-center w-75 container" style="max-width: 1500px">
+        <p class="text-left text">Total photos: {{ object_list|length }}</p>
+
+        <div class="img-row">
+
+            <div class="img-column">
+                {% for object in object_list|first_objects %}
+                    {% include 'image/image_thumbnail.html' %}
+                {% endfor %}
+            </div>
+
+            <div class="img-column">
+                {% for object in object_list|second_objects %}
+
+                    {% include 'image/image_thumbnail.html' %}
+                {% endfor %}
+            </div>
+            <div class="img-column">
+                {% for object in object_list|third_objects %}
+
+                    {% include 'image/image_thumbnail.html' %}
+                {% endfor %}
+            </div>
+
+            <div class="img-column">
+                {% for object in object_list|fourth_objects %}
+
+                    {% include 'image/image_thumbnail.html' %}
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

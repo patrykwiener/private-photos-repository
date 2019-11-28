@@ -17,7 +17,7 @@ class RecognitionResult:
             return None
         person_index = 0
         distance_index = 1
-        return max(recognized_people, key=itemgetter(distance_index))[person_index]
+        return min(recognized_people, key=itemgetter(distance_index))[person_index]
 
     @property
     def recognized_people(self) -> List[Tuple[RecognizedPersonModel, float]]:
