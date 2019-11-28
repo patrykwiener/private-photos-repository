@@ -1,7 +1,4 @@
-from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.utils import timezone
-
 from django.db import models
 from taggit.managers import TaggableManager
 from django.utils.crypto import get_random_string
@@ -41,12 +38,12 @@ class ImageModel(models.Model):
     def get_absolute_url(self):
         return reverse('image:image-detail',
                        args=[
-                             self.slug
-                             ])
+                           self.slug
+                       ])
 
     def save(self, *args, **kwargs):
         self._set_slug()
-        super(ImageModel, self).save()
+        super(ImageModel, self).save(*args, **kwargs)
 
     def _set_slug(self):
         if not self.slug:
@@ -55,3 +52,6 @@ class ImageModel(models.Model):
                 self.slug = get_random_string(12, '0123456789')
                 if ImageModel.objects.filter(slug=self.slug).count() == 0:
                     slug_duplication = False
+
+    class Meta:
+        ordering = ('-publish',)

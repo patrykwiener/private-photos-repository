@@ -36,3 +36,23 @@ def sub_or_zero(a, b):
 @register.filter(name='markdown')
 def markdown_format(text):
     return mark_safe(markdown.markdown(text))
+
+
+@register.filter(name='fourth_objects')
+def fourth_objects(object_list):
+    return [instance for idx, instance in enumerate(object_list) if idx % 4 == 3]
+
+
+@register.filter(name='third_objects')
+def third_objects(object_list):
+    return [instance for idx, instance in enumerate(object_list) if idx % 4 == 2]
+
+
+@register.filter(name='second_objects')
+def second_objects(object_list):
+    return [instance for idx, instance in enumerate(object_list) if idx % 4 == 1]
+
+
+@register.filter(name='first_objects')
+def first_objects(object_list):
+    return [instance for idx, instance in enumerate(object_list) if idx % 4 == 0]

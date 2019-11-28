@@ -3,9 +3,12 @@ from django.contrib import messages
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
+from taggit.models import Tag
 
 from apps.image.forms import ImageUploadForm, CreateImagePostForm
+from apps.image.models.face_model import FaceModel
 from apps.image.models.image_model import ImageModel
+from apps.image.models.recognized_person_model import RecognizedPersonModel
 from apps.image.services.create_image_post import CreateImagePost
 from apps.image.services.create_people import CreatePeople
 from apps.image.services.image_processing.recognition import Recognition
@@ -21,7 +24,7 @@ class UploadImageBase(FormView):
 class UploadImageView(UploadImageBase):
     form_class = ImageUploadForm
     template_name = 'image/image_upload.html'
-    success_url = '/image/create-image-post'
+    success_url = '/image/image-post-create/'
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_draft_if_exists():
@@ -38,7 +41,7 @@ class UploadImageView(UploadImageBase):
 class CreateImagePostView(UploadImageBase):
     form_class = CreateImagePostForm
     template_name = 'image/image_post_create.html'
-    upload_url = '/image/upload-image'
+    upload_url = '/image/image-upload'
     success_url = '/'
 
     def __init__(self, **kwargs):
@@ -144,10 +147,22 @@ class ImagePostDeleteView(DeleteView):
         return reverse('image:image-post-list')
 
     def post(self, request, *args, **kwargs):
-        messages.success(self.request, 'The post has been deleted!')
+        messages.success(self.request, 'The image has been deleted!')
         return super(ImagePostDeleteView, self).post(request, *args, **kwargs)
 
 
 class ImagePostListView(ListView):
+    template_name = 'image/imagemodel_list1.html'
     queryset = ImageModel.objects.filter(status=ImageModel.PUBLISHED)
     paginate_by = 100
+
+    def get(self, request, *args, **kwargs):
+        tag_slug = 'tag_slug'
+        if tag_slug in kwargs:
+            tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
+            self.queryset = self.queryset.filter(tags__in=[tag])
+        person_slug = 'person_slug'
+        if person_slug in kwargs:
+            person = get_object_or_404(RecognizedPersonModel, slug=kwargs[person_slug])
+            self.queryset = self.queryset.filter(facemodel__person__in=[person])
+        return super(ImagePostListView, self).get(request, *args, **kwargs)
