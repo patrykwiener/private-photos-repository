@@ -30,15 +30,28 @@
     {% endblock %}
 </head>
 <body>
+
 <section class="main_section">
+    {% if user.is_authenticated %}
+        Hi! {{ user.username }}
+        <a href="{% url 'logout' %}" class="btn btn-success a-btn-slide-text" role="button">
+            <span class="fas fa-check" aria-hidden="true"></span>
+            <span><strong>Logout</strong></span>
+        </a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-success a-btn-slide-text" role="button">
+            <span><strong>Login</strong></span>
+        </a>
+        <a href="{% url 'accounts:signup' %}" class="btn btn-success a-btn-slide-text" role="button">
+            <span><strong>Signup</strong></span>
+        </a>
+    {% endif %}
     <div class="w-75 p-3 col-center text-center">
         {% include 'partials/messages.html' %}
     </div>
 
+    {% block content %}{% endblock %}
 
-
-        {% block content %}{% endblock %}
-    </div>
 </section>
 
 <script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>

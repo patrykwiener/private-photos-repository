@@ -152,7 +152,6 @@ class ImagePostDeleteView(DeleteView):
 
 
 class ImagePostListView(ListView):
-    template_name = 'image/imagemodel_list1.html'
     queryset = ImageModel.objects.filter(status=ImageModel.PUBLISHED)
     paginate_by = 100
 
