@@ -9,9 +9,10 @@ from django.utils.timezone import is_aware, make_aware
 
 class UploadImage:
 
-    def __init__(self, data):
+    def __init__(self, user, data):
         self._image = data['image']
         self._image_model = ImageModel()
+        self._image_model.user = user
 
     def create_draft(self):
         self._add_image()

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registration.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div class="container text-left">
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <p><a class="a-form" href="{% url 'password_reset' %}">Forgot Password?</a></p>
+            <button class="btn btn-success" name="upload" type="submit" value="Upload">
+                <span class="fas fa-check" aria-hidden="true"></span>
+                <span><strong>Login</strong></span>
+            </button>
+        </form>
+    </div>
+{% endblock %}

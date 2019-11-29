@@ -3,36 +3,56 @@
 {% block title %}Posts{% endblock %}
 
 {% block content %}
-    <div class="text-center w-75 container" style="max-width: 1500px">
+    <div class="text-center container" style="max-width: 92%;">
         <p class="text-left text">Total photos: {{ object_list|length }}</p>
 
-        <div class="img-row">
+        <div class="flex-container">
 
-            <div class="img-column">
-                {% for object in object_list|first_objects %}
-                    {% include 'image/image_thumbnail.html' %}
-                {% endfor %}
-            </div>
+            {% for object in object_list %}
+                <div class="transparent-container">
+                    <img class="thumb-img" src="{{ object.thumbnail.url }}"/>
 
-            <div class="img-column">
-                {% for object in object_list|second_objects %}
+                    <div class="overlay p-3 cursor" style="display:inline-block; overflow: hidden"
+                         onclick="location.href='{% url 'image:image-detail' object.slug %}';">
+                        <div class="container h-100">
+                            <div class="row align-items-center h-100">
+                                <div class="col-12 mx-auto">
+                                    <div class="text-center" style="overflow: hidden">
 
-                    {% include 'image/image_thumbnail.html' %}
-                {% endfor %}
-            </div>
-            <div class="img-column">
-                {% for object in object_list|third_objects %}
+                                        <div class="form-group">
+                                            {% for tag in object.tags.all %}
 
-                    {% include 'image/image_thumbnail.html' %}
-                {% endfor %}
-            </div>
+                                                <a href="{% url 'image:image-post-list-by-slug' tag.slug %}"
+                                                   class="badge badge-success custom-tag tag"
+                                                   onclick="location.href='#'; event.stopPropagation();">
+                                                    {{ tag.name }}
+                                                </a>
 
-            <div class="img-column">
-                {% for object in object_list|fourth_objects %}
+                                            {% endfor %}
+                                        </div>
 
-                    {% include 'image/image_thumbnail.html' %}
-                {% endfor %}
-            </div>
+                                        <div class="form-group">
+                                            {% for face in object.facemodel_set.all %}
+                                                {% if face.person != None %}
+
+                                                    <a href="{% url 'image:image-post-list-by-person' face.person.slug %}"
+                                                       class="badge badge-primary person-tag tag"
+                                                       onclick="location.href='#'; event.stopPropagation();">
+                                                        {{ face.person }}
+                                                    </a>
+
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
 
         </div>
 

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
@@ -6,7 +7,6 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from taggit.models import Tag
 
 from apps.image.forms import ImageUploadForm, CreateImagePostForm
-from apps.image.models.face_model import FaceModel
 from apps.image.models.image_model import ImageModel
 from apps.image.models.recognized_person_model import RecognizedPersonModel
 from apps.image.services.create_image_post import CreateImagePost
@@ -15,10 +15,12 @@ from apps.image.services.image_processing.recognition import Recognition
 from apps.image.services.upload_image import UploadImage
 
 
-class UploadImageBase(FormView):
-    @staticmethod
-    def get_draft_if_exists():
-        return ImageModel.objects.filter(status=ImageModel.DRAFT)
+class UploadImageBase(LoginRequiredMixin, FormView):
+    def __init__(self):
+        super(UploadImageBase, self).__init__()
+
+    def get_draft_if_exists(self):
+        return ImageModel.objects.filter(user=self.request.user, status=ImageModel.DRAFT)
 
 
 class UploadImageView(UploadImageBase):
@@ -27,13 +29,14 @@ class UploadImageView(UploadImageBase):
     success_url = '/image/image-post-create/'
 
     def dispatch(self, request, *args, **kwargs):
+        dispatch_result = super(UploadImageView, self).dispatch(request, *args, **kwargs)
         if self.get_draft_if_exists():
             return redirect(self.get_success_url())
-        return super(UploadImageView, self).dispatch(request, *args, **kwargs)
+        return dispatch_result
 
     def form_valid(self, form):
         data = form.cleaned_data
-        image_model = UploadImage(data).create_draft()
+        image_model = UploadImage(self.request.user, data).create_draft()
         Recognition(image_model).execute()
         return super(UploadImageView, self).form_valid(form)
 
@@ -44,8 +47,8 @@ class CreateImagePostView(UploadImageBase):
     upload_url = '/image/image-upload'
     success_url = '/'
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super(CreateImagePostView, self).__init__()
         self._image_model = None
 
     def obtain_context_attrs(self):
@@ -61,11 +64,8 @@ class CreateImagePostView(UploadImageBase):
             'object': self._image_model,
         }
 
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.obtain_context_attrs()
-
     def dispatch(self, request, *args, **kwargs):
+        self.obtain_context_attrs()
         if not self._image_model:
             return redirect(self.upload_url)
         self.setup_form_view_attrs()
@@ -83,11 +83,9 @@ class CreateImagePostView(UploadImageBase):
         CreateImagePost(self._image_model, form.cleaned_data).execute()
         CreatePeople(self._image_model.facemodel_set.all(), form.cleaned_data).save_recognized_face()
         self.success_url = self._image_model.get_absolute_url()
-        messages.success(self.request, 'The post has been created!')
         return super(CreateImagePostView, self).form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Oops! Something went wrong. Check your inputs!')
         return super(CreateImagePostView, self).form_invalid(form)
 
 
@@ -97,10 +95,10 @@ class ImagePostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
-        return get_object_or_404(self.model, slug=slug, status=self.model.PUBLISHED)
+        return get_object_or_404(self.model, user=self.request.user, slug=slug, status=self.model.PUBLISHED)
 
 
-class ImagePostEditView(UpdateView):
+class ImagePostEditView(LoginRequiredMixin, UpdateView):
     form_class = CreateImagePostForm
     template_name = 'image/image_post_create.html'
     model = ImageModel
@@ -111,7 +109,7 @@ class ImagePostEditView(UpdateView):
 
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
-        object_to_update = get_object_or_404(self.model, slug=slug, status=self.model.PUBLISHED)
+        object_to_update = get_object_or_404(self.model, user=self.request.user, slug=slug, status=self.model.PUBLISHED)
         self.initial = {
             'faces': object_to_update.facemodel_set.all(),
             'latitude': object_to_update.latitude,
@@ -131,17 +129,16 @@ class ImagePostEditView(UpdateView):
         return super(ImagePostEditView, self).form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Oops! Something went wrong. Check your inputs!')
         return super(ImagePostEditView, self).form_invalid(form)
 
 
-class ImagePostDeleteView(DeleteView):
+class ImagePostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'image/image_post_delete.html'
     model = ImageModel
 
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
-        return get_object_or_404(self.model, slug=slug, status=self.model.PUBLISHED)
+        return get_object_or_404(self.model, user=self.request.user, slug=slug, status=self.model.PUBLISHED)
 
     def get_success_url(self):
         return reverse('image:image-post-list')
@@ -151,12 +148,11 @@ class ImagePostDeleteView(DeleteView):
         return super(ImagePostDeleteView, self).post(request, *args, **kwargs)
 
 
-class ImagePostListView(ListView):
-    template_name = 'image/imagemodel_list1.html'
-    queryset = ImageModel.objects.filter(status=ImageModel.PUBLISHED)
+class ImagePostListView(LoginRequiredMixin, ListView):
     paginate_by = 100
 
     def get(self, request, *args, **kwargs):
+        self.queryset = ImageModel.objects.filter(user=self.request.user, status=ImageModel.PUBLISHED)
         tag_slug = 'tag_slug'
         if tag_slug in kwargs:
             tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
