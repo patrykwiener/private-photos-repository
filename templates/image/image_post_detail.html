@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load list_tags %}
+{% block title %}Image Detail{% endblock %}
+
+
+{% block content %}
+    <div class="container w-75 p-3">
+        {% include 'image/image_with_faces.html' %}
+
+        <div class="card card-block content">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12" style="max-width: none;">
+
+                        <div class="text-left p-4">
+
+                            <p class="minor-text">
+                                Published {{ object.publish }}
+                            </p>
+
+                            {% if object.datetime_taken != None %}
+                                <p class="minor-text">
+                                    Taken {{ object.datetime_taken }}
+                                </p>
+                            {% endif %}
+
+                            <div class="form-group">
+                                {% for tag in object.tags.all %}
+                                    <a href="{% url 'image:image-post-list-by-slug' tag.slug %}" class="badge badge-success">{{ tag.name }}</a>
+                                {% endfor %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ object.body|markdown }}
+                            </div>
+
+                            {% if object.latitude != None %}
+                                <div class="p-3 ">
+                                    {% include 'image/../map/map_non_editable.html' %}
+                                </div>
+                            {% endif %}
+
+                            <a href="{% url 'image:image-edit' object.slug %}" class="btn btn-primary a-btn-slide-text">
+                                <span class="far fa-edit" aria-hidden="true"></span>
+                                <span><strong>Edit</strong></span>
+                            </a>
+                            <a href="{% url 'image:image-delete' object.slug %}"
+                               class="btn btn-danger a-btn-slide-text">
+                                <span class="fas fa-minus-circle" aria-hidden="true"></span>
+                                <span><strong>Delete</strong></span>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

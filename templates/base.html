@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/face_container.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/map.css' %}"/>
+    <link type="text/css" href="{% static 'emoji/css/emoji.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'tagsinput.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
+    <script src="https://kit.fontawesome.com/215dedd947.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <script src="{% static 'css-element-queries/ElementQueries.js' %}"></script>
+    <script src="{% static 'css-element-queries/ResizeSensor.js' %}"></script>
+    {% block styles %}
+
+    {% endblock %}
+</head>
+<body>
+
+<section class="main_section">
+    {% if user.is_authenticated %}
+        Hi! {{ user.username }}
+        <a href="{% url 'logout' %}" class="btn btn-primary a-btn-slide-text" role="button">
+            <span><strong>Logout</strong></span>
+        </a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary a-btn-slide-text" role="button">
+            <span><strong>Login</strong></span>
+        </a>
+        <a href="{% url 'accounts:signup' %}" class="btn btn-success a-btn-slide-text" role="button">
+            <span><strong>Signup</strong></span>
+        </a>
+    {% endif %}
+    <div class="w-75 p-3 col-center text-center">
+        {% include 'partials/messages.html' %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+</section>
+
+<script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>
+<script src={% static 'emoji/js/config.js' %}></script>
+<script src={% static 'emoji/js/util.js' %}></script>
+<script src={% static 'emoji/js/jquery.emojiarea.js' %}></script>
+<script src={% static 'emoji/js/emoji-picker.js' %}></script>
+<script src={% static 'tagsinput.js' %}></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8L1pvQjk6yfaK8EbkdlAqLvRAJewSCXE&callback=initMap"
+        async defer></script>
+<script src="{% static 'js/map.js' %}"></script>
+
+
+</body>
+</html>

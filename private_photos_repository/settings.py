@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'apps.users.apps.UsersConfig',
+    'apps.accounts.apps.AccountsConfig',
     'apps.image.apps.ImageConfig',
     'django.contrib.postgres',
     'django.contrib.admin',
@@ -42,6 +44,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'mathfilters',
     'crispy_forms',
+    'widget_tweaks',
+    'taggit',
+    'taggit_labels',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -105,7 +110,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+
 ]
+
+LOGIN_REDIRECT_URL = 'image:image-post-list'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -125,9 +137,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'static/'),
 )
-
 
 MEDIA_ROOT = 'C:/Development/Python/private_photos_repository/media/'
 MEDIA_URL = '/media/'
@@ -139,3 +150,12 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+# email
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'patrykwiener123@gmail.com'
+EMAIL_HOST_PASSWORD = 'patryksample123'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Private Photos Repository Team <noreply@example.com>'
