@@ -3,6 +3,8 @@ from django.db import models
 from taggit.managers import TaggableManager
 from django.utils.crypto import get_random_string
 
+from apps.users.models import CustomUser
+
 
 class ImageModel(models.Model):
     DRAFT = 'draft'
@@ -11,6 +13,13 @@ class ImageModel(models.Model):
         (DRAFT, 'draft'),
         (PUBLISHED, 'published'),
     )
+
+    # def __init__(self, user=None):
+    #     super(ImageModel, self).__init__()
+    #     if user:
+    #         self.user = user
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     image = models.ImageField(upload_to='images/',
                               default='pic_folder/None/no-img.jpg',

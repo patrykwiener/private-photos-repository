@@ -34,12 +34,11 @@
 <section class="main_section">
     {% if user.is_authenticated %}
         Hi! {{ user.username }}
-        <a href="{% url 'logout' %}" class="btn btn-success a-btn-slide-text" role="button">
-            <span class="fas fa-check" aria-hidden="true"></span>
+        <a href="{% url 'logout' %}" class="btn btn-primary a-btn-slide-text" role="button">
             <span><strong>Logout</strong></span>
         </a>
     {% else %}
-        <a href="{% url 'login' %}" class="btn btn-success a-btn-slide-text" role="button">
+        <a href="{% url 'login' %}" class="btn btn-primary a-btn-slide-text" role="button">
             <span><strong>Login</strong></span>
         </a>
         <a href="{% url 'accounts:signup' %}" class="btn btn-success a-btn-slide-text" role="button">

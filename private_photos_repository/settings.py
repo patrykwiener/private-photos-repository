@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'apps.users.apps.UsersConfig',
     'apps.accounts.apps.AccountsConfig',
     'apps.image.apps.ImageConfig',
     'django.contrib.postgres',
@@ -114,6 +115,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOGIN_REDIRECT_URL = 'image:image-post-list'
 LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
