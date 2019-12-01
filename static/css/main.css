@@ -11,31 +11,35 @@
 
 .main_section {
     height: 100%;
-    padding-top: 100px;
-    text-align: center;
+    padding-bottom: 100px;
 }
 
-body {
-    /*background-color: #f7f8fa;*/
-    background-color: #5a5b5d;
-    min-height: 100%;
-    margin: 0;
-    color: #e9e9e9;
-}
 
 .content {
-    background-color: #444547;
+    /*background-color: #444547;*/
 }
 
 .text {
-    color: #e9e9e9;
+    /*color: #e9e9e9;*/
 }
 
-
-html {
+html, body {
     height: 100%;
+    position: relative;
 }
 
+.main-container {
+    min-height: 100%;
+    display: block;
+    position: relative;
+    padding-bottom: 56px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
 
 .img {
     width: 100%;
@@ -143,4 +147,8 @@ html {
 
 .flex-container > div {
     margin: 3px;
+}
+
+.post_list_container {
+    max-width: 92% !important;
 }

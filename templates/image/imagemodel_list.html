@@ -3,10 +3,17 @@
 {% block title %}Posts{% endblock %}
 
 {% block content %}
-    <div class="text-center container" style="max-width: 92%;">
+    <div class="container post_list_container">
+        {% if tag %}
+            <h2>Images tagged with "{{ tag.name }}"</h2>
+        {% elif person %}
+            <h2>Images tagged with "{{ person.full_name }}"</h2>
+        {% else %}
+            <h2>All images</h2>
+        {% endif %}
         <p class="text-left text">Total photos: {{ object_list|length }}</p>
 
-        <div class="flex-container">
+        <div class="flex-container text-center">
 
             {% for object in object_list %}
                 <div class="transparent-container">
