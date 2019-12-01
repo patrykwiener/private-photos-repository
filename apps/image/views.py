@@ -150,15 +150,23 @@ class ImagePostDeleteView(LoginRequiredMixin, DeleteView):
 
 class ImagePostListView(LoginRequiredMixin, ListView):
     paginate_by = 100
+    tag = None
+    person = None
 
     def get(self, request, *args, **kwargs):
         self.queryset = ImageModel.objects.filter(user=self.request.user, status=ImageModel.PUBLISHED)
         tag_slug = 'tag_slug'
         if tag_slug in kwargs:
-            tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
-            self.queryset = self.queryset.filter(tags__in=[tag])
+            self.tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
+            self.queryset = self.queryset.filter(tags__in=[self.tag])
         person_slug = 'person_slug'
         if person_slug in kwargs:
-            person = get_object_or_404(RecognizedPersonModel, slug=kwargs[person_slug])
-            self.queryset = self.queryset.filter(facemodel__person__in=[person])
+            self.person = get_object_or_404(RecognizedPersonModel, slug=kwargs[person_slug])
+            self.queryset = self.queryset.filter(facemodel__person__in=[self.person])
         return super(ImagePostListView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ImagePostListView, self).get_context_data(**kwargs)
+        context['tag'] = self.tag
+        context['person'] = self.person
+        return context

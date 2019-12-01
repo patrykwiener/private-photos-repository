@@ -9,15 +9,18 @@
     {% endif %}
     ">Private Photos Repository</a>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
 
-    <div class="collapse navbar-collapse">
+    <div class="collapse navbar-collapse" id="navBar">
         <ul class="navbar-nav mr-auto">
             {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "image:image-post-list" %}">Home</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url "image:image-post-create" %}">Upload</a>
                 </li>
@@ -26,6 +29,11 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
+
+                <form class="form-inline my-2 my-lg-0 ml-auto">
+                    <input class="form-control" type="search" placeholder="Search Images" aria-label="Search">
+                    <button class="btn btn-outline-white btn-md my-2 my-sm-0 ml-3" type="submit">Search</button>
+                </form>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown"
@@ -45,7 +53,7 @@
                     <a class="nav-link" href="{% url "login" %}">Login</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url "accounts:signup" %}">Signup</a>
+                    <a class="nav-link" href="{% url "accounts:signup" %}">Sign Up</a>
                 </li>
 
             {% endif %}
