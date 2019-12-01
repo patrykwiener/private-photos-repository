@@ -1,0 +1,45 @@
+{% load mathfilters %}
+
+
+<div class="text-center p-3">
+    <div id="img_container" class="my_container">
+        <img class="img-fluid img rounded" src="{{ object.thumbnail.url }}" style="max-width: none;" alt="image"/>
+        {% block face_rects %}
+        {% endblock %}
+    </div>
+</div>
+
+
+<script>
+    let originalHeight = "{{ object.thumbnail.height }}";
+    let originalWidth = "{{ object.thumbnail.width }}";
+    let image = $('#img_container');
+
+    function map_faces() {
+        let elements = image.children();
+        for (let element of elements) {
+            map_face_to_image(element);
+        }
+    }
+
+    function map_face_to_image(rect) {
+        if (rect.id.search('face') !== -1) {
+            let currentHeight = image.height();
+            let factor = currentHeight / originalHeight;
+            let original_coordinates = rect.getAttribute('data-value');
+            let coordinates = original_coordinates.substring(1, original_coordinates.length - 1).split(", ");
+            let top = coordinates[0];
+            let left = coordinates[3];
+            let width = coordinates[1] - coordinates[3];
+            let height = coordinates[2] - coordinates[0];
+            rect.style.top = top * factor - 5 + "px";
+            rect.style.left = left * factor - 5 + "px";
+            rect.style.width = width * factor + 10 + "px";
+            rect.style.height = height * factor + 10 + "px";
+        }
+    }
+
+    new ResizeSensor(jQuery(image), function () {
+        map_faces();
+    });
+</script>

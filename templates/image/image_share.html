@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Share
+{% endblock %}
+
+{% block content %}
+    <div class="container text-left">
+        {% include 'image/image/image_with_faces_non_editable.html' %}
+        <h2>Share</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.email|as_crispy_field }}
+            <button class="btn btn-success" name="upload" type="submit" value="Upload">
+                <span class="fas fa-share" aria-hidden="true"></span>
+                <span><strong>Share</strong></span>
+            </button>
+            <a href="{% url 'image:image-detail' object.slug %}"
+               class="btn btn-light-blue a-btn-slide-text">
+                <span class="fas fa-minus-circle" aria-hidden="true"></span>
+                <span><strong>Cancel</strong></span>
+            </a>
+        </form>
+    </div>
+{% endblock %}

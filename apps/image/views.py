@@ -1,18 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.views.generic.edit import FormView, UpdateView, DeleteView, CreateView
 from taggit.models import Tag
 
-from apps.image.forms import ImageUploadForm, CreateImagePostForm
+from apps.image.forms import ImageUploadForm, CreateImagePostForm, ShareImageForm
 from apps.image.models.image_model import ImageModel
 from apps.image.models.recognized_person_model import RecognizedPersonModel
+from apps.image.models.shared_image_model import SharedImageModel
 from apps.image.services.create_image_post import CreateImagePost
 from apps.image.services.create_people import CreatePeople
 from apps.image.services.image_processing.recognition import Recognition
 from apps.image.services.upload_image import UploadImage
+from apps.users.models import CustomUser
 
 
 class UploadImageBase(LoginRequiredMixin, FormView):
@@ -26,7 +28,7 @@ class UploadImageBase(LoginRequiredMixin, FormView):
 class UploadImageView(UploadImageBase):
     form_class = ImageUploadForm
     template_name = 'image/image_upload.html'
-    success_url = '/image/image-post-create/'
+    success_url = reverse_lazy('image:image-post-create')
 
     def dispatch(self, request, *args, **kwargs):
         dispatch_result = super(UploadImageView, self).dispatch(request, *args, **kwargs)
@@ -44,8 +46,8 @@ class UploadImageView(UploadImageBase):
 class CreateImagePostView(UploadImageBase):
     form_class = CreateImagePostForm
     template_name = 'image/image_post_create.html'
-    upload_url = '/image/image-upload'
-    success_url = '/'
+    success_url = reverse_lazy('image:image-post-list')
+    upload_url = reverse_lazy("image:image-upload")
 
     def __init__(self):
         super(CreateImagePostView, self).__init__()
@@ -135,13 +137,11 @@ class ImagePostEditView(LoginRequiredMixin, UpdateView):
 class ImagePostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'image/image_post_delete.html'
     model = ImageModel
+    success_url = reverse_lazy('image:image-post-list')
 
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
         return get_object_or_404(self.model, user=self.request.user, slug=slug, status=self.model.PUBLISHED)
-
-    def get_success_url(self):
-        return reverse('image:image-post-list')
 
     def post(self, request, *args, **kwargs):
         messages.success(self.request, 'The image has been deleted!')
@@ -150,11 +150,12 @@ class ImagePostDeleteView(LoginRequiredMixin, DeleteView):
 
 class ImagePostListView(LoginRequiredMixin, ListView):
     paginate_by = 100
+    template_name = 'image/image_list.html'
     tag = None
     person = None
 
     def get(self, request, *args, **kwargs):
-        self.queryset = ImageModel.objects.filter(user=self.request.user, status=ImageModel.PUBLISHED)
+        self.queryset = ImageModel.published.filter(user=self.request.user)
         tag_slug = 'tag_slug'
         if tag_slug in kwargs:
             self.tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
@@ -170,3 +171,70 @@ class ImagePostListView(LoginRequiredMixin, ListView):
         context['tag'] = self.tag
         context['person'] = self.person
         return context
+
+
+class SharedImageListView(LoginRequiredMixin, ListView):
+    paginate_by = 100
+    template_name = 'image/shared_image_list.html'
+    tag = None
+    person = None
+
+    def get(self, request, *args, **kwargs):
+        self.queryset = ImageModel.objects.filter(sharedimagemodel__recipient=self.request.user)
+        tag_slug = 'tag_slug'
+        if tag_slug in kwargs:
+            self.tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
+            self.queryset = self.queryset.filter(tags__in=[self.tag])
+        person_slug = 'person_slug'
+        if person_slug in kwargs:
+            self.person = get_object_or_404(RecognizedPersonModel, slug=kwargs[person_slug])
+            self.queryset = self.queryset.filter(facemodel__person__in=[self.person])
+        return super(SharedImageListView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SharedImageListView, self).get_context_data(**kwargs)
+        context['tag'] = self.tag
+        context['person'] = self.person
+        return context
+
+
+class SharedImageDetail(LoginRequiredMixin, DetailView):
+    template_name = 'image/shared_image_detail.html'
+    model = ImageModel
+
+    def get_object(self, queryset=None):
+        slug = self.kwargs.get('slug')
+        return get_object_or_404(self.model, sharedimagemodel__recipient=self.request.user, slug=slug,
+                                 status=self.model.PUBLISHED)
+
+
+class ShareImageCreateView(LoginRequiredMixin, FormView):
+    form_class = ShareImageForm
+    template_name = 'image/image_share.html'
+    success_url = reverse_lazy('image:image-post-list')
+
+    @property
+    def image(self):
+        slug = self.kwargs.get('slug')
+        return get_object_or_404(ImageModel, user=self.request.user, slug=slug, status=ImageModel.PUBLISHED)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.extra_context = {
+            'object': self.image,
+        }
+        return super(ShareImageCreateView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.initial = {
+            'user': self.request.user,
+            'image': self.image
+        }
+        return super(ShareImageCreateView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        SharedImageModel.objects.create(
+            recipient=CustomUser.objects.get(email=form.cleaned_data['email']),
+            image=self.image,
+        )
+        messages.success(self.request, "You have shared the post!")
+        return super(ShareImageCreateView, self).form_valid(form)

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Shared
+{% endblock %}
+
+{% block content %}
+    <div class="container post_list_container">
+    {% if tag %}
+        <h2>Shared images tagged with "{{ tag.name }}"</h2>
+    {% elif person %}
+        <h2>Shared images tagged with "{{ person.full_name }}"</h2>
+    {% else %}
+        <h2>All shared images</h2>
+    {% endif %}
+    <p class="text-left text">Total photos: {{ object_list|length }}</p>
+
+    <div class="flex-container text-center">
+
+        {% for object in object_list %}
+            <div class="transparent-container">
+                <img class="thumb-img" src="{{ object.thumbnail.url }}"/>
+
+                <div class="overlay p-3 cursor" style="display:inline-block; overflow: hidden"
+                     onclick="location.href='{% url 'image:shared-image-detail' object.slug %}';">
+                    <div class="container h-100">
+                        <div class="row align-items-center h-100">
+                            <div class="col-12 mx-auto">
+                                <div class="text-center" style="overflow: hidden">
+
+                                    <div class="form-group">
+                                        {% for tag in object.tags.all %}
+
+                                            <a href="{% url 'image:shared-by-tag' tag.slug %}"
+                                               class="badge badge-success custom-tag tag"
+                                               onclick="location.href='#'; event.stopPropagation();">
+                                                {{ tag.name }}
+                                            </a>
+
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="form-group">
+                                        {% for face in object.facemodel_set.all %}
+                                            {% if face.person != None %}
+
+                                                <a href="{% url 'image:shared-by-person' face.person.slug %}"
+                                                   class="badge badge-primary person-tag tag"
+                                                   onclick="location.href='#'; event.stopPropagation();">
+                                                    {{ face.person }}
+                                                </a>
+
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+    </div>
+{% endblock %}

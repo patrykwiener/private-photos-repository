@@ -6,6 +6,11 @@ from django.utils.crypto import get_random_string
 from apps.users.models import CustomUser
 
 
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super(PublishedManager, self).get_queryset().filter(status='published')
+
+
 class ImageModel(models.Model):
     DRAFT = 'draft'
     PUBLISHED = 'published'
@@ -13,11 +18,6 @@ class ImageModel(models.Model):
         (DRAFT, 'draft'),
         (PUBLISHED, 'published'),
     )
-
-    # def __init__(self, user=None):
-    #     super(ImageModel, self).__init__()
-    #     if user:
-    #         self.user = user
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
@@ -35,7 +35,7 @@ class ImageModel(models.Model):
                               choices=STATUS_CHOICES,
                               default=DRAFT)
 
-    body = models.TextField(max_length=1024, default="")
+    body = models.TextField(max_length=1024, default='')
 
     tags = TaggableManager()
 
@@ -43,6 +43,9 @@ class ImageModel(models.Model):
                             unique_for_date='publish')
 
     publish = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
+    published = PublishedManager()
 
     def get_absolute_url(self):
         return reverse('image:image-detail',

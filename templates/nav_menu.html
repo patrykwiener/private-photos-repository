@@ -3,9 +3,9 @@
     <!--Branding button-->
     <a class="navbar-brand" href="
     {% if user.is_authenticated %}
-        {% url "image:image-post-list" %}
+        {% url 'image:image-post-list' %}
     {% else %}
-        {% url "home" %}
+        {% url 'home' %}
     {% endif %}
     ">Private Photos Repository</a>
 
@@ -19,10 +19,13 @@
         <ul class="navbar-nav mr-auto">
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url "image:image-post-list" %}">Home</a>
+                    <a class="nav-link" href="{% url 'image:image-post-list' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url "image:image-post-create" %}">Upload</a>
+                    <a class="nav-link" href="{% url 'image:image-post-create' %}">Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'image:shared' %}">Shared</a>
                 </li>
             {% else %}
             {% endif %}
@@ -36,24 +39,27 @@
                 </form>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i> {{ user.username }} </a>
+
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        <i class="fas fa-user"></i> {{ user.username }}
+                    </a>
 
                     <div class="dropdown-menu dropdown-menu-right dropdown-default"
-                         aria-labelledby="navbarDropdownMenuLink-4">
+                         aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="#">My account</a>
-                        <a class="dropdown-item" href="{% url "logout" %}">Log out</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
                     </div>
+
                 </li>
 
             {% else %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url "login" %}">Login</a>
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url "accounts:signup" %}">Sign Up</a>
+                    <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
                 </li>
 
             {% endif %}
