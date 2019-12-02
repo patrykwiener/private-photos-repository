@@ -8,23 +8,31 @@
 
 {% block content %}
     <div class="container w-75 p-3">
-    <form action="." method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="text-left">
-            {{ form.image|as_crispy_field }}
-        </div>
-        <input class="btn btn-primary" type="submit" value="Upload Image">
-    </form>
+        <form id="form_id" action="." method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="text-left">
+                {{ form.image|as_crispy_field }}
+            </div>
+            <button id="upload-btn" class="btn btn-primary" type="submit" value="Upload Image">Upload Image
+            </button>
+        </form>
 
-    <script>
-        $('#id_image').on('change', function () {
-            var fileName = $(this).val();
-            if (fileName === "") {
-                fileName = "Choose file";
-            }
-            $(this).next('.custom-file-label').html(fileName);
-        })
-    </script>
+        <script>
+            $('#id_image').on('change', function () {
+                var fileName = $(this).val();
+                if (fileName === "") {
+                    fileName = "Choose file";
+                }
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $("#form_id").on("submit", function () {
+                    $('#upload-btn').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Uploading...').addClass('disabled');
+                });
+            });
+        </script>
     </div>
 
 {% endblock %}
