@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Delete Image{% endblock %}
+{% block title %}Delete Shared Image{% endblock %}
 
 {% block content %}
     <div class="container w-75 p-3">
-        {% include 'image/image/image_with_faces_non_editable.html' %}
-
+        {% with object=image %}
+            {% include 'image/image/image_with_faces_non_editable.html' %}
+        {% endwith %}
         <div class="card card-block content">
             <form action="." method="post">
                 {% csrf_token %}
                 <div class="form-group text-center p-3">
-                    <h3>Are you sure you want to delete the image?</h3>
+                    <h3>Are you sure you want to delete shared image?</h3>
 
                     <button name="delete" type="submit" value="Delete" class="btn btn-danger a-btn-slide-text">
                         <span class="fas fa-minus-circle" aria-hidden="true"></span>
                         <span><strong>Delete</strong></span>
                     </button>
-                    <a href="{% url 'image:image-detail' object.slug %}" class="btn btn-light-blue">
+                    <a href="{% url 'image:shared-image-detail' image.slug %}" class="btn btn-light-blue">
                         <span class="fas fa-times-circle" aria-hidden="true"></span>
                         <span><strong>Cancel</strong></span>
                     </a>

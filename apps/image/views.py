@@ -104,7 +104,6 @@ class ImagePostEditView(LoginRequiredMixin, UpdateView):
     form_class = CreateImagePostForm
     template_name = 'image/image_post_create.html'
     model = ImageModel
-    initial = {}
 
     def __init__(self):
         super(ImagePostEditView, self).__init__()
@@ -151,8 +150,11 @@ class ImagePostDeleteView(LoginRequiredMixin, DeleteView):
 class ImagePostListView(LoginRequiredMixin, ListView):
     paginate_by = 100
     template_name = 'image/image_list.html'
-    tag = None
-    person = None
+
+    def __init__(self):
+        super(ImagePostListView, self).__init__()
+        self.tag = None
+        self.person = None
 
     def get(self, request, *args, **kwargs):
         self.queryset = ImageModel.published.filter(user=self.request.user)
@@ -173,14 +175,55 @@ class ImagePostListView(LoginRequiredMixin, ListView):
         return context
 
 
-class SharedImageListView(LoginRequiredMixin, ListView):
+class SharedWithUserImageListView(LoginRequiredMixin, ListView):
     paginate_by = 100
     template_name = 'image/shared_image_list.html'
-    tag = None
-    person = None
+
+    def __init__(self):
+        super(SharedWithUserImageListView, self).__init__()
+        self.tag = None
+        self.person = None
+        self.shared_images = {}
 
     def get(self, request, *args, **kwargs):
-        self.queryset = ImageModel.objects.filter(sharedimagemodel__recipient=self.request.user)
+        self.queryset = ImageModel.published.filter(sharedimagemodel__recipient=self.request.user)
+
+        tag_slug = 'tag_slug'
+        if tag_slug in kwargs:
+            self.tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
+            self.queryset = self.queryset.filter(tags__in=[self.tag])
+
+        person_slug = 'person_slug'
+        if person_slug in kwargs:
+            self.person = get_object_or_404(RecognizedPersonModel, slug=kwargs[person_slug])
+            self.queryset = self.queryset.filter(facemodel__person__in=[self.person])
+
+        for image in self.queryset.distinct():
+            for shared_image in image.sharedimagemodel_set.all():
+                self.shared_images.setdefault(shared_image.image.user, []).append(image)
+
+        return super(SharedWithUserImageListView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SharedWithUserImageListView, self).get_context_data(**kwargs)
+        context['tag'] = self.tag
+        context['person'] = self.person
+        context['shared_images'] = self.shared_images
+        return context
+
+
+class SharedByUserImageListView(LoginRequiredMixin, ListView):
+    paginate_by = 100
+    template_name = 'image/shared_by_user_image_list.html'
+
+    def __init__(self):
+        super(SharedByUserImageListView, self).__init__()
+        self.tag = None
+        self.person = None
+        self.shared_images = {}
+
+    def get(self, request, *args, **kwargs):
+        self.queryset = ImageModel.published.filter(sharedimagemodel__image__user=self.request.user)
         tag_slug = 'tag_slug'
         if tag_slug in kwargs:
             self.tag = get_object_or_404(Tag, slug=kwargs[tag_slug])
@@ -189,16 +232,22 @@ class SharedImageListView(LoginRequiredMixin, ListView):
         if person_slug in kwargs:
             self.person = get_object_or_404(RecognizedPersonModel, slug=kwargs[person_slug])
             self.queryset = self.queryset.filter(facemodel__person__in=[self.person])
-        return super(SharedImageListView, self).get(request, *args, **kwargs)
+
+        for image in self.queryset.distinct():
+            for shared_image in image.sharedimagemodel_set.all():
+                self.shared_images.setdefault(shared_image.recipient, []).append(image)
+
+        return super(SharedByUserImageListView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(SharedImageListView, self).get_context_data(**kwargs)
+        context = super(SharedByUserImageListView, self).get_context_data(**kwargs)
         context['tag'] = self.tag
         context['person'] = self.person
+        context['shared_images'] = self.shared_images
         return context
 
 
-class SharedImageDetail(LoginRequiredMixin, DetailView):
+class SharedImageDetailView(LoginRequiredMixin, DetailView):
     template_name = 'image/shared_image_detail.html'
     model = ImageModel
 
@@ -206,6 +255,59 @@ class SharedImageDetail(LoginRequiredMixin, DetailView):
         slug = self.kwargs.get('slug')
         return get_object_or_404(self.model, sharedimagemodel__recipient=self.request.user, slug=slug,
                                  status=self.model.PUBLISHED)
+
+
+class SharedImageDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'image/shared_image_delete.html'
+    model = SharedImageModel
+    success_url = reverse_lazy('image:shared')
+
+    def __init__(self):
+        super(SharedImageDeleteView, self).__init__()
+        self.slug = None
+
+    def setup(self, request, *args, **kwargs):
+        super(SharedImageDeleteView, self).setup(request, *args, **kwargs)
+        self.slug = self.kwargs.get('slug')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, image__slug=self.slug,
+                                 recipient=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        self.extra_context = {
+            'image': get_object_or_404(ImageModel, slug=self.slug,
+                                       sharedimagemodel__recipient=self.request.user)
+        }
+        return super(SharedImageDeleteView, self).get(request, *args, **kwargs)
+
+
+class ImageSharedByUserDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'image/shared_by_user_image_delete.html'
+    model = SharedImageModel
+    success_url = reverse_lazy('image:shared-by-user')
+
+    def __init__(self):
+        super(ImageSharedByUserDeleteView, self).__init__()
+        self.recipient = None
+        self.slug = None
+
+    def setup(self, request, *args, **kwargs):
+        super(ImageSharedByUserDeleteView, self).setup(request, *args, **kwargs)
+        self.slug = self.kwargs.get('slug')
+        self.recipient = get_object_or_404(CustomUser, id=self.kwargs.get('recipient_id'))
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, image__user=self.request.user, image__slug=self.slug,
+                                 recipient=self.recipient)
+
+    def get(self, request, *args, **kwargs):
+        self.extra_context = {
+            'image': get_object_or_404(ImageModel, user=self.request.user, slug=self.slug,
+                                       sharedimagemodel__recipient=self.recipient),
+            'recipient': self.recipient,
+        }
+        return super(ImageSharedByUserDeleteView, self).get(request, *args, **kwargs)
 
 
 class ShareImageCreateView(LoginRequiredMixin, FormView):

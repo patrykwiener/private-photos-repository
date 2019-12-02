@@ -24,8 +24,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'image:image-post-create' %}">Upload</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'image:shared' %}">Shared</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="sharedDropDown" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Shared
+                    </a>
+                    <div class="dropdown-menu dropdown-default" aria-labelledby="sharedDropDown">
+                        <a class="dropdown-item" href="{% url 'image:shared' %}">Shared with me</a>
+                        <a class="dropdown-item" href="{% url 'image:shared-by-user' %}">Shared by me</a>
+                    </div>
                 </li>
             {% else %}
             {% endif %}

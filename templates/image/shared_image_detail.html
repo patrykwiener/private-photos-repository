@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load list_tags %}
-{% block title %}Image Detail{% endblock %}
+{% block title %}Shared Image Detail{% endblock %}
 
 
 {% block content %}
@@ -28,7 +28,7 @@
                             <div class="form-group">
                                 {% for tag in object.tags.all %}
                                     <a href="{% url 'image:shared-by-tag' tag.slug %}"
-                                       class="badge badge-success">{{ tag.name }}</a>
+                                       class="badge badge-success tag">{{ tag.name }}</a>
                                 {% endfor %}
                             </div>
 
@@ -41,6 +41,11 @@
                                     {% include 'image/../map/map_non_editable.html' %}
                                 </div>
                             {% endif %}
+                            <a href="{% url 'image:shared-image-delete' object.slug %}"
+                               class="btn btn-danger a-btn-slide-text">
+                                <span class="fas fa-minus-circle" aria-hidden="true"></span>
+                                <span><strong>Delete</strong></span>
+                            </a>
 
                         </div>
 

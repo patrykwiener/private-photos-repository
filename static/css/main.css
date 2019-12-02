@@ -114,6 +114,13 @@ footer {
     max-height: 350px
 }
 
+.thumb-img-shared {
+    width: auto;
+    height: 16vw;
+    min-height: 170px;
+    max-height: 250px;
+}
+
 
 .thumb-body {
     overflow: hidden;
@@ -131,10 +138,40 @@ footer {
     font-size: calc(9px + .2vw);
     word-break: break-word;
     white-space: normal;
+    transition: transform .3s;
+}
+
+.tag:hover {
+    transform: scale(1.15);
 }
 
 .person-tag {
     background-color: deepskyblue;
+}
+
+.icon {
+    transition: transform .3s;
+    transform: scale(1.2);
+}
+
+.icon:hover {
+    transform: scale(1.5);
+}
+
+.trash-icon {
+    color: #dddddd;
+}
+
+.trash-icon:hover {
+    color: #CC0000 !important;
+}
+
+.share-icon {
+    color: #dddddd;
+}
+
+.share-icon:hover {
+    color: #ffffff !important;
 }
 
 .flex-container {

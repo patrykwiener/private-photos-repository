@@ -15,9 +15,19 @@ urlpatterns = [
     path('edit/<slug:slug>/', views.ImagePostEditView.as_view(), name='image-edit'),
     path('delete/<slug:slug>/', views.ImagePostDeleteView.as_view(), name='image-delete'),
 
-    path('shared/', views.SharedImageListView.as_view(), name='shared'),
-    path('shared/tag/<slug:tag_slug>/', views.SharedImageListView.as_view(), name='shared-by-tag'),
-    path('shared/person/<slug:person_slug>/', views.SharedImageListView.as_view(), name='shared-by-person'),
-    path('shared/detail/<slug:slug>/', views.SharedImageDetail.as_view(), name='shared-image-detail'),
+    path('shared/', views.SharedWithUserImageListView.as_view(), name='shared'),
+    path('shared/tag/<slug:tag_slug>/', views.SharedWithUserImageListView.as_view(), name='shared-by-tag'),
+    path('shared/person/<slug:person_slug>/', views.SharedWithUserImageListView.as_view(),
+         name='shared-by-person'),
+
+    path('shared-by-user/', views.SharedByUserImageListView.as_view(), name='shared-by-user'),
+    path('shared-by-user/tag/<slug:tag_slug>/', views.SharedByUserImageListView.as_view(),
+         name='shared-by-user-by-tag'),
+    path('shared-by-user/person/<slug:person_slug>/', views.SharedByUserImageListView.as_view(),
+         name='shared-by-user-by-person'),
+
+    path('shared/detail/<slug:slug>/', views.SharedImageDetailView.as_view(), name='shared-image-detail'),
+    path('shared-by-user/delete/<slug:slug><int:recipient_id>/', views.ImageSharedByUserDeleteView.as_view(), name='shared-by-user-image-delete'),
+    path('shared/delete/<slug:slug>/', views.SharedImageDeleteView.as_view(), name='shared-image-delete'),
     path('share/<slug:slug>/', views.ShareImageCreateView.as_view(), name='image-share'),
 ]
