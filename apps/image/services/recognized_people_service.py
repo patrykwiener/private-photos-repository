@@ -4,7 +4,7 @@ from apps.image.models.face_model import FaceModel
 from apps.image.models.recognized_person_model import RecognizedPersonModel
 
 
-class CreatePeople:
+class RecognizedPeopleService:
 
     def __init__(self, faces: List[FaceModel], cleaned_data):
         self.faces = faces

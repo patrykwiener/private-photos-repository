@@ -7,7 +7,7 @@ from django.utils.dateparse import parse_datetime
 from django.utils.timezone import is_aware, make_aware
 
 
-class UploadImage:
+class ImageUploadService:
 
     def __init__(self, user, data):
         self._image = data['image']

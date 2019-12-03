@@ -10,7 +10,7 @@
 {% block content %}
     <div class="container w-75 p-3">
         <form action="." method="post" onsubmit="getMarkerPosition()">
-            {% include 'image/image_with_faces.html' %}
+            {% include 'image/image/image_with_faces_editable.html' %}
 
             <div class="card card-block content">
                 <div class="container">
@@ -37,7 +37,7 @@
                                     <span class="fas fa-plus-circle" aria-hidden="true"></span>
                                     <span><strong>Upload</strong></span>
                                 </button>
-                                <button class="btn btn-secondary" name="cancel" type="submit" value="Cancel"
+                                <button class="btn btn-light-blue" name="cancel" type="submit" value="Cancel"
                                         formnovalidate>
                                     <span class="fas fa-times-circle" aria-hidden="true"></span>
                                     <span><strong>Cancel</strong></span>
