@@ -42,8 +42,10 @@ footer {
 }
 
 .img {
-    width: 100%;
+    width: auto;
     height: auto;
+    min-height: 25em;
+    max-height: 83vh;
 }
 
 .img-list {
@@ -146,12 +148,18 @@ footer {
 }
 
 .person-tag {
-    background-color: deepskyblue;
+    background-color: #009646;
+}
+
+.icon-container {
+    position: absolute;
+    right: 14px;
+    top: 12px;
 }
 
 .icon {
     transition: transform .3s;
-    transform: scale(1.2);
+    font-size: calc(13px + .2vw);
 }
 
 .icon:hover {
@@ -160,6 +168,7 @@ footer {
 
 .trash-icon {
     color: #dddddd;
+    padding: .04em;
 }
 
 .trash-icon:hover {
@@ -168,10 +177,20 @@ footer {
 
 .share-icon {
     color: #dddddd;
+    padding: .10em;
 }
 
 .share-icon:hover {
     color: #ffffff !important;
+}
+
+.download-icon {
+    color: #dddddd;
+    padding: .10em;
+}
+
+.download-icon:hover {
+    color: #b5e8ff !important;
 }
 
 .flex-container {
