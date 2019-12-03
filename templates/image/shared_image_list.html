@@ -30,11 +30,17 @@
                                  onclick="location.href='{% url 'image:shared-detail' object.slug %}';">
 
                                 <div class="container h-100 text-center" style="position: absolute">
-                                    <a href="{% url 'image:shared-delete' object.slug %}"
-                                       onclick="location.href='#'; event.stopPropagation();"
-                                       style="position: absolute; right:15px; top:15px;">
-                                        <span class="fas fa-trash trash-icon icon" aria-hidden="true"></span>
-                                    </a>
+                                    <div class="icon-container">
+                                        <a href="{{ object.image.url }}"
+                                           onclick="location.href='#'; event.stopPropagation();" download>
+                                    <span class="fas fa-cloud-download-alt download-icon icon"
+                                          aria-hidden="true"></span>
+                                        </a>
+                                        <a href="{% url 'image:shared-delete' object.slug %}"
+                                           onclick="location.href='#'; event.stopPropagation();">
+                                            <span class="fas fa-trash trash-icon icon" aria-hidden="true"></span>
+                                        </a>
+                                    </div>
                                     <div class="row align-items-center h-100">
                                         <div class="col-12 mx-auto">
                                             <div class="text-center" style="overflow: hidden">
@@ -57,7 +63,7 @@
                                                             {% if face.person != None %}
 
                                                                 <a href="{% url 'image:shared-by-person' face.person.slug %}"
-                                                                   class="badge badge-primary person-tag tag"
+                                                                   class="badge person-tag tag"
                                                                    onclick="location.href='#'; event.stopPropagation();">
                                                                     {{ face.person }}
                                                                 </a>

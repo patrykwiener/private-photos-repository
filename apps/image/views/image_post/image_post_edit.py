@@ -3,13 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import UpdateView
 
-from apps.image.forms import CreateImagePostForm
+from apps.image.forms.image_post_create_form import ImagePostCreateForm
 from apps.image.models.image_model import ImageModel
 from apps.image.services.recognized_people_service import RecognizedPeopleService
 
 
 class ImagePostEdit(LoginRequiredMixin, UpdateView):
-    form_class = CreateImagePostForm
+    form_class = ImagePostCreateForm
     template_name = 'image/image_post_create.html'
     model = ImageModel
 
