@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load list_tags %}
+{% load filters %}
 {% block title %}Shared Image Detail{% endblock %}
 
 
@@ -41,7 +41,7 @@
                                     {% include 'image/../map/map_non_editable.html' %}
                                 </div>
                             {% endif %}
-                            <a href="{% url 'image:shared-image-delete' object.slug %}"
+                            <a href="{% url 'image:shared-delete' object.slug %}"
                                class="btn btn-danger a-btn-slide-text">
                                 <span class="fas fa-minus-circle" aria-hidden="true"></span>
                                 <span><strong>Delete</strong></span>

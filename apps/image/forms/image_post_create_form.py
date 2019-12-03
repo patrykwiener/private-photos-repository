@@ -2,15 +2,9 @@ from django import forms
 from taggit.forms import TagField, TagWidget
 
 from apps.image.models.image_model import ImageModel
-from apps.image.models.shared_image_model import SharedImageModel
-from apps.users.models import CustomUser
 
 
-class ImageUploadForm(forms.Form):
-    image = forms.ImageField(max_length=255)
-
-
-class CreateImagePostForm(forms.ModelForm):
+class ImagePostCreateForm(forms.ModelForm):
     class Meta:
         model = ImageModel
         fields = (
@@ -22,7 +16,7 @@ class CreateImagePostForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(CreateImagePostForm, self).__init__(*args, **kwargs)
+        super(ImagePostCreateForm, self).__init__(*args, **kwargs)
         initial = kwargs['initial']
 
         for face in initial['faces']:
@@ -56,22 +50,3 @@ class CreateImagePostForm(forms.ModelForm):
 
     def get_faces(self):
         return [field for field in self if 'face_' in field.name]
-
-
-class ShareImageForm(forms.Form):
-    email = forms.EmailField()
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs['initial'].pop('user', None)
-        self.image = kwargs['initial'].pop('image', None)
-        super(ShareImageForm, self).__init__(*args, **kwargs)
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if not CustomUser.objects.filter(email=email).count():
-            raise forms.ValidationError('User with the given email does not exist.')
-        if self.user and self.user.email == email:
-            raise forms.ValidationError('You cannot share an image with yourself.')
-        if SharedImageModel.objects.filter(recipient=CustomUser.objects.get(email=email), image=self.image).count():
-            raise forms.ValidationError('You\'re already sharing this image with the given user.')
-        return email

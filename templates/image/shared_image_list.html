@@ -27,10 +27,10 @@
                             <img class="thumb-img-shared" src="{{ object.thumbnail.url }}"/>
 
                             <div class="overlay cursor text-right" style="display:inline-block; overflow: hidden;"
-                                 onclick="location.href='{% url 'image:shared-image-detail' object.slug %}';">
+                                 onclick="location.href='{% url 'image:shared-detail' object.slug %}';">
 
                                 <div class="container h-100 text-center" style="position: absolute">
-                                    <a href="{% url 'image:shared-image-delete' object.slug %}"
+                                    <a href="{% url 'image:shared-delete' object.slug %}"
                                        onclick="location.href='#'; event.stopPropagation();"
                                        style="position: absolute; right:15px; top:15px;">
                                         <span class="fas fa-trash trash-icon icon" aria-hidden="true"></span>

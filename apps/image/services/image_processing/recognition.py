@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import List
 import face_recognition
 from apps.image.services.image_processing.picture import PictureForRecognition
-from apps.image.services.utils import NumpyListConverter
+from apps.image.services.image_processing.utils import NumpyListConverter
 from apps.image.services.image_processing.recognition_result import RecognitionResult
 from apps.image.models.face_model import FaceModel
 from apps.image.models.image_model import ImageModel

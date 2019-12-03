@@ -14,10 +14,10 @@ class PublishedManager(models.Manager):
 class ImageModel(models.Model):
     DRAFT = 'draft'
     PUBLISHED = 'published'
-    STATUS_CHOICES = (
+    STATUS_CHOICES = [
         (DRAFT, 'draft'),
         (PUBLISHED, 'published'),
-    )
+    ]
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
@@ -48,7 +48,7 @@ class ImageModel(models.Model):
     published = PublishedManager()
 
     def get_absolute_url(self):
-        return reverse('image:image-detail',
+        return reverse('image:image-post-detail',
                        args=[
                            self.slug
                        ])

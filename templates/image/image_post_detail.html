@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load list_tags %}
+{% load filters %}
 {% block title %}Image Detail{% endblock %}
 
 
@@ -42,17 +42,17 @@
                                 </div>
                             {% endif %}
 
-                            <a href="{% url 'image:image-edit' object.slug %}" class="btn btn-primary a-btn-slide-text">
+                            <a href="{% url 'image:image-post-edit' object.slug %}" class="btn btn-primary a-btn-slide-text">
                                 <span class="far fa-edit" aria-hidden="true"></span>
                                 <span><strong>Edit</strong></span>
                             </a>
-                            <a href="{% url 'image:image-delete' object.slug %}"
+                            <a href="{% url 'image:image-post-delete' object.slug %}"
                                class="btn btn-danger a-btn-slide-text">
                                 <span class="fas fa-minus-circle" aria-hidden="true"></span>
                                 <span><strong>Delete</strong></span>
                             </a>
                             <span class="float-right">
-                            <a href="{% url 'image:image-share' object.slug %}"
+                            <a href="{% url 'image:image-post-share' object.slug %}"
                                class="btn btn-secondary a-btn-slide-text">
                                 <span class="fas fa-share" aria-hidden="true"></span>
                                 <span><strong>Share</strong></span>

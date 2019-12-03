@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load list_tags %}
+{% load filters %}
 {% block title %}Posts{% endblock %}
 
 {% block content %}
@@ -20,15 +20,15 @@
                     <img class="thumb-img" src="{{ object.thumbnail.url }}"/>
 
                     <div class="overlay cursor text-right" style="display:inline-block; overflow: hidden;"
-                         onclick="location.href='{% url 'image:image-detail' object.slug %}';">
+                         onclick="location.href='{% url 'image:image-post-detail' object.slug %}';">
 
                         <div class="container h-100 text-center" style="position: absolute">
                             <div style="position: absolute;right:15px; top:15px;">
-                                <a href="{% url 'image:image-share' object.slug %}" style="padding: .25em .4em;"
+                                <a href="{% url 'image:image-post-share' object.slug %}" style="padding: .25em .4em;"
                                    onclick="location.href='#'; event.stopPropagation();">
                                     <span class="fas fa-share-square share-icon icon" aria-hidden="true"></span>
                                 </a>
-                                <a href="{% url 'image:image-delete' object.slug %}"
+                                <a href="{% url 'image:image-post-delete' object.slug %}"
                                    onclick="location.href='#'; event.stopPropagation();">
                                     <span class="fas fa-trash trash-icon icon" aria-hidden="true"></span>
                                 </a>

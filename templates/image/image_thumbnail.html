@@ -2,19 +2,11 @@
     <img class="img-fluid" src="{{ object.thumbnail.url }}" style=""/>
 
     <div class="overlay p-3 cursor" style="display:inline-block; overflow: hidden"
-         onclick="location.href='{% url 'image:image-detail' object.slug %}';">
+         onclick="location.href='{% url 'image:image-post-detail' object.slug %}';">
         <div class="container h-100">
             <div class="row align-items-center h-100">
                 <div class="col-12 mx-auto">
                     <div class="text-center" style="overflow: hidden">
-                        {#                                            <p class="minor-text form-group" style="font-size: 1vw;">#}
-                        {#                                                Published {{ object.publish }}#}
-                        {#                                            </p>#}
-                        {#                        <a href="{% url 'image:image-detail' object.slug %}"#}
-                        {#                           class="btn btn-primary btn-sm">#}
-                        {#                            <span class="fas fa-eye" aria-hidden="true"></span>#}
-                        {#                            <span><strong>More</strong></span>#}
-                        {#                        </a>#}
 
                         <div class="form-group">
                             {% for tag in object.tags.all %}

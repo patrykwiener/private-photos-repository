@@ -1,7 +1,7 @@
 from apps.image.models.image_model import ImageModel
 
 
-class CreateImagePost:
+class ImagePostCreateService:
 
     def __init__(self, image_model: ImageModel, cleaned_data):
         self._image_model = image_model
