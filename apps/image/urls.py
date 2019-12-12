@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.image.views.download_image import DownloadImage
 from apps.image.views.image_post.image_post_creation.image_post_create import ImagePostCreate
 from apps.image.views.image_post.image_post_creation.image_upload import ImageUpload
 from apps.image.views.image_post.image_post_delete import ImagePostDelete
@@ -39,4 +40,5 @@ urlpatterns = [
     path('<slug:slug>/delete/', ImagePostDelete.as_view(), name='image-post-delete'),
     path('<slug:slug>/share/', ImagePostShare.as_view(), name='image-post-share'),
 
+    path('<slug:slug>/download/', DownloadImage.as_view(), name='image-download'),
 ]

@@ -24,11 +24,13 @@
 
                         <div class="container h-100 text-center" style="position: absolute">
                             <div class="icon-container">
-                                <a href="{{ object.image.url }}"
-                                   onclick="location.href='#'; event.stopPropagation();" download>
+
+                                <a href="{% url "image:image-download" object.slug %}"
+                                   onclick="location.href='#'; event.stopPropagation();">
                                     <span class="fas fa-cloud-download-alt download-icon icon"
                                           aria-hidden="true"></span>
                                 </a>
+
                                 <a href="{% url 'image:image-post-share' object.slug %}"
                                    onclick="location.href='#'; event.stopPropagation();">
                                     <span class="fas fa-share-square share-icon icon" aria-hidden="true"></span>
