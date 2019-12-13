@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="container w-75 p-3">
-        <form action="." method="post" onsubmit="getMarkerPosition()">
+        <form action="." id="form_id" method="post" onsubmit="getMarkerPosition()">
             {% include 'image/image/image_with_faces_editable.html' %}
 
             <div class="card card-block content">
@@ -72,5 +72,5 @@
 {% block javascript %}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8L1pvQjk6yfaK8EbkdlAqLvRAJewSCXE&callback=initMap"
             async defer></script>
-    <script src="{% static 'js/map.js' %}"></script>
+    <script src="{% static 'js/map/map_manager.js' %}"></script>
 {% endblock %}
