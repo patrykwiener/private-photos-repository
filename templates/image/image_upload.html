@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Upload Image{% endblock %}
@@ -16,23 +17,10 @@
             <button id="upload-btn" class="btn btn-primary" type="submit" value="Upload Image">Upload Image
             </button>
         </form>
-
-        <script>
-            $('#id_image').on('change', function () {
-                var fileName = $(this).val();
-                if (fileName === "") {
-                    fileName = "Choose file";
-                }
-                $(this).next('.custom-file-label').html(fileName);
-            });
-        </script>
-        <script>
-            $(document).ready(function () {
-                $("#form_id").on("submit", function () {
-                    $('#upload-btn').html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Uploading...').addClass('disabled');
-                });
-            });
-        </script>
     </div>
 
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'js/image_upload.js' %}"></script>
 {% endblock %}

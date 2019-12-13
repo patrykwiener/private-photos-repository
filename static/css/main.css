@@ -44,7 +44,6 @@ footer {
 .full-img {
     width: auto;
     height: auto;
-    min-height: 25em;
     max-height: 83vh;
 }
 
