@@ -4,11 +4,7 @@ from taggit.forms import TagField, TagWidget
 from apps.image.models.image_model import ImageModel
 
 
-class ImageUploadForm(forms.Form):
-    image = forms.ImageField(max_length=255)
-
-
-class CreateImagePostForm(forms.ModelForm):
+class ImagePostCreateForm(forms.ModelForm):
     class Meta:
         model = ImageModel
         fields = (
@@ -20,7 +16,7 @@ class CreateImagePostForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(CreateImagePostForm, self).__init__(*args, **kwargs)
+        super(ImagePostCreateForm, self).__init__(*args, **kwargs)
         initial = kwargs['initial']
 
         for face in initial['faces']:

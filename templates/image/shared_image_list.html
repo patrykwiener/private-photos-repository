@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Shared
+{% endblock %}
+
+{% block content %}
+    <div class="container post_list_container">
+        <h2 class="pb-3">
+            {% if tag %}
+                Shared with me tagged with "{{ tag.name }}"
+            {% elif person %}
+                Shared with me tagged with "{{ person.full_name }}"
+            {% else %}
+                Shared with me
+            {% endif %}
+        </h2>
+
+        {% for user, object_list in shared_images.items %}
+            <div class="pb-5">
+                <h5>Shared by {{ user.username }} &lt{{ user.email }}&gt</h5>
+                <p>Total photos: {{ object_list|length }}</p>
+                <div class="flex-container text-center">
+                    {% for object in object_list %}
+
+                        <div class="transparent-container">
+                            <img class="thumb-img-shared" src="{{ object.thumbnail.url }}"/>
+
+                            <div class="overlay cursor text-right" style="display:inline-block; overflow: hidden;"
+                                 onclick="location.href='{% url 'image:shared-detail' object.slug %}';">
+
+                                <div class="container h-100 text-center" style="position: absolute">
+                                    <div class="icon-container">
+                                        <a href="{{ object.image.url }}"
+                                           onclick="location.href='#'; event.stopPropagation();" download>
+                                    <span class="fas fa-cloud-download-alt download-icon icon"
+                                          aria-hidden="true"></span>
+                                        </a>
+                                        <a href="{% url 'image:shared-delete' object.slug %}"
+                                           onclick="location.href='#'; event.stopPropagation();">
+                                            <span class="fas fa-trash trash-icon icon" aria-hidden="true"></span>
+                                        </a>
+                                    </div>
+                                    <div class="row align-items-center h-100">
+                                        <div class="col-12 mx-auto">
+                                            <div class="text-center" style="overflow: hidden">
+                                                {% if object.tags.all %}
+                                                    <div class="p-1">
+                                                        {% for tag in object.tags.all %}
+
+                                                            <a href="{% url 'image:shared-by-tag' tag.slug %}"
+                                                               class="badge badge-success custom-tag tag"
+                                                               onclick="location.href='#'; event.stopPropagation();">
+                                                                {{ tag.name }}
+                                                            </a>
+
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if object.facemodel_set.all %}
+                                                    <div class="p-1">
+                                                        {% for face in object.facemodel_set.all %}
+                                                            {% if face.person != None %}
+
+                                                                <a href="{% url 'image:shared-by-person' face.person.slug %}"
+                                                                   class="badge person-tag tag"
+                                                                   onclick="location.href='#'; event.stopPropagation();">
+                                                                    {{ face.person }}
+                                                                </a>
+
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <p>No images</p>
+        {% endfor %}
+
+
+    </div>
+{% endblock %}

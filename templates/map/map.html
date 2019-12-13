@@ -1,60 +1,7 @@
+{% load static %}
+
 {{ form.latitude.as_hidden }}
 {{ form.longitude.as_hidden }}
-<div class="p-3 form-group" id="map" style="height: 300px"></div>
+<div class="p-3 form-group" id="map"></div>
 
-<script>
-    function initMap() {
-        var lat_tag = document.getElementById('id_latitude');
-        var lng_tag = document.getElementById('id_longitude');
-        var lat = "", lng = "";
-        if (lat_tag != null && lng_tag != null) {
-            lat = lat_tag.value;
-            lng = lng_tag.value;
-        }
-        var placeMarker = true;
-        var zoom = 9;
-        if (lat === "" || lng === "") {
-            lat = 50.3785;
-            lng = 14.9706;
-            placeMarker = false;
-            zoom = 4;
-        }
-        var position = {lat: parseFloat(lat), lng: parseFloat(lng)};
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: position,
-            zoom: zoom,
-            streetViewControl: false
-        });
-        if (placeMarker) {
-            placeMarkerAndPanTo(position, map);
-        }
-        map.addListener('click', function (e) {
-            placeMarkerAndPanTo(e.latLng, map);
-        });
-    }
-
-    function placeMarkerAndPanTo(position, map) {
-        if (marker) {
-            marker.setPosition(position);
-
-        } else {
-            marker = new google.maps.Marker({
-                position: position,
-                map: map,
-                draggable: true
-            });
-            google.maps.event.addListener(marker, "rightclick", function () {
-                removeMarker()
-            });
-        }
-        map.panTo(position);
-    }
-
-    function removeMarker() {
-        if (marker) {
-            marker.setMap(null);
-            marker = null;
-        }
-    }
-
-</script>
+<script src="{% static 'js/map/editable_map.js' %}"></script>

@@ -1,0 +1,13 @@
+{% extends "image/image/image_with_faces.html" %}
+
+{% load filters %}
+{% load widget_tweaks %}
+
+{% block face_rects %}
+    {% for field, face in form.get_faces|zip:object.facemodel_set.all %}
+        <div id="face{{ face.id }}" class="face_rect face_popup-hide input el"
+             data-value="{{ face.location }}">
+            {% render_field field class="face_input face_popup-hide" %}
+        </div>
+    {% endfor %}
+{% endblock %}

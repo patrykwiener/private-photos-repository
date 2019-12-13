@@ -1,0 +1,93 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark blue">
+
+    <!--Branding button-->
+    <a class="navbar-brand" href="
+    {% if user.is_authenticated %}
+        {% url 'image:image-post-list' %}
+    {% else %}
+        {% url 'home' %}
+    {% endif %}
+    ">Private Photos Repository</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <div class="collapse navbar-collapse" id="navBar">
+        <ul class="navbar-nav mr-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'image:image-post-list' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'image:image-post-create' %}">Upload</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="sharedDropDown" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Shared
+                    </a>
+                    <div class="dropdown-menu dropdown-default" aria-labelledby="sharedDropDown">
+                        <a class="dropdown-item" href="{% url 'image:shared' %}">Shared with me</a>
+                        <a class="dropdown-item" href="{% url 'image:shared-by-user' %}">Shared by me</a>
+                    </div>
+                </li>
+            {% else %}
+            {% endif %}
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+
+{#                <form class="form-inline my-2 my-lg-0 ml-auto">#}
+{#                    <input class="form-control" type="search" placeholder="Search Images" aria-label="Search">#}
+{#                    <button class="btn btn-outline-white btn-md my-2 my-sm-0 ml-3" type="submit">Search</button>#}
+{#                </form>#}
+
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        <i class="fas fa-user"></i> {{ user.username }}
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-right dropdown-default"
+                         aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">My account</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                    </div>
+
+                </li>
+
+            {% else %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                </li>
+
+            {% endif %}
+        </ul>
+    </div>
+
+</nav>
+
+
+
+
+
+{% if user.is_authenticated %}
+    Hi! {{ user.username }}
+    <a href="{% url 'logout' %}" class="btn btn-primary a-btn-slide-text" role="button">
+        <span><strong>Logout</strong></span>
+    </a>
+{% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary a-btn-slide-text" role="button">
+        <span><strong>Login</strong></span>
+    </a>
+    <a href="{% url 'accounts:signup' %}" class="btn btn-success a-btn-slide-text" role="button">
+        <span><strong>Signup</strong></span>
+    </a>
+{% endif %}

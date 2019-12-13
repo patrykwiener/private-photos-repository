@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load filters %}
-{% block title %}Image Detail{% endblock %}
+{% block title %}Shared Image Detail{% endblock %}
 
 
 {% block content %}
@@ -26,21 +26,8 @@
                             {% endif %}
 
                             <div class="form-group">
-                                {% for face in object.facemodel_set.all %}
-                                    {% if face.person != None %}
-
-                                        <a href="{% url 'image:image-post-list-by-person' face.person.slug %}"
-                                           class="badge person-tag tag"
-                                           onclick="location.href='#'; event.stopPropagation();">
-                                            {{ face.person }}
-                                        </a>
-
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="form-group">
                                 {% for tag in object.tags.all %}
-                                    <a href="{% url 'image:image-post-list-by-slug' tag.slug %}"
+                                    <a href="{% url 'image:shared-by-tag' tag.slug %}"
                                        class="badge badge-success tag">{{ tag.name }}</a>
                                 {% endfor %}
                             </div>
@@ -54,13 +41,7 @@
                                     {% include 'image/../map/map_non_editable.html' %}
                                 </div>
                             {% endif %}
-
-                            <a href="{% url 'image:image-post-edit' object.slug %}"
-                               class="btn btn-primary a-btn-slide-text">
-                                <span class="far fa-edit" aria-hidden="true"></span>
-                                <span><strong>Edit</strong></span>
-                            </a>
-                            <a href="{% url 'image:image-post-delete' object.slug %}"
+                            <a href="{% url 'image:shared-delete' object.slug %}"
                                class="btn btn-danger a-btn-slide-text">
                                 <span class="fas fa-minus-circle" aria-hidden="true"></span>
                                 <span><strong>Delete</strong></span>
@@ -70,11 +51,6 @@
                                    class="btn btn-info a-btn-slide-text" download>
                                     <span class="fas fa-cloud-download-alt" aria-hidden="true"></span>
                                     <span><strong>Download</strong></span>
-                                </a>
-                                <a href="{% url 'image:image-post-share' object.slug %}"
-                                   class="btn btn-secondary a-btn-slide-text">
-                                    <span class="fas fa-share" aria-hidden="true"></span>
-                                    <span><strong>Share</strong></span>
                                 </a>
                             </div>
 

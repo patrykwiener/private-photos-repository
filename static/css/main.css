@@ -11,35 +11,40 @@
 
 .main_section {
     height: 100%;
-    padding-top: 100px;
-    text-align: center;
+    padding-bottom: 100px;
 }
 
-body {
-    /*background-color: #f7f8fa;*/
-    background-color: #5a5b5d;
-    min-height: 100%;
-    margin: 0;
-    color: #e9e9e9;
-}
 
 .content {
-    background-color: #444547;
+    /*background-color: #444547;*/
 }
 
 .text {
-    color: #e9e9e9;
+    /*color: #e9e9e9;*/
 }
 
-
-html {
+html, body {
     height: 100%;
+    position: relative;
 }
 
+.main-container {
+    min-height: 100%;
+    display: block;
+    position: relative;
+    padding-bottom: 56px;
+}
 
-.img {
+footer {
+    position: absolute;
+    bottom: 0;
     width: 100%;
+}
+
+.full-img {
+    width: auto;
     height: auto;
+    max-height: 83vh;
 }
 
 .img-list {
@@ -107,7 +112,14 @@ html {
     width: auto;
     height: 16vw;
     min-height: 230px;
-    max-height: 350px
+    max-height: 350px;
+}
+
+.thumb-img-shared {
+    width: auto;
+    height: 16vw;
+    min-height: 170px;
+    max-height: 250px;
 }
 
 
@@ -127,10 +139,57 @@ html {
     font-size: calc(9px + .2vw);
     word-break: break-word;
     white-space: normal;
+    transition: transform .3s;
+}
+
+.tag:hover {
+    transform: scale(1.15);
 }
 
 .person-tag {
-    background-color: deepskyblue;
+    background-color: #009646;
+}
+
+.icon-container {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+}
+
+.icon {
+    transition: transform .3s;
+    font-size: calc(13px + .2vw);
+}
+
+.icon:hover {
+    transform: scale(1.5);
+}
+
+.trash-icon {
+    color: #dddddd;
+    padding: .04em;
+}
+
+.trash-icon:hover {
+    color: #CC0000 !important;
+}
+
+.share-icon {
+    color: #dddddd;
+    padding: .10em;
+}
+
+.share-icon:hover {
+    color: #ffffff !important;
+}
+
+.download-icon {
+    color: #dddddd;
+    padding: .10em;
+}
+
+.download-icon:hover {
+    color: #b5e8ff !important;
 }
 
 .flex-container {
@@ -143,4 +202,8 @@ html {
 
 .flex-container > div {
     margin: 3px;
+}
+
+.post_list_container {
+    max-width: 92% !important;
 }

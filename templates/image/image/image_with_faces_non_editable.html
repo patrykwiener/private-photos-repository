@@ -1,0 +1,14 @@
+{% extends "image/image/image_with_faces.html" %}
+
+{% block face_rects %}
+    {% for face in object.facemodel_set.all %}
+        <div id="face{{ face.id }}" class="face_rect face_popup-hide input el"
+             data-value="{{ face.location }}">
+            {% if face.person == None %}
+                <input class="face_input face_popup-hide" type="text" value="" readonly>
+            {% else %}
+                <input class="face_input face_popup-hide" type="text" value="{{ face.person }}" readonly>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}
