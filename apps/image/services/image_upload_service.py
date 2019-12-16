@@ -9,12 +9,12 @@ from django.utils.timezone import is_aware, make_aware
 
 class ImageUploadService:
 
-    def __init__(self, user, data):
-        self._image = data['image']
+    def __init__(self, user, image):
+        self._image = image
         self._image_model = ImageModel()
         self._image_model.user = user
 
-    def create_draft(self):
+    def upload(self):
         self._add_image()
 
         pic = Thumbnail.create_pic(self._image)

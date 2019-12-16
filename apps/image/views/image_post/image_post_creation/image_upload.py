@@ -20,6 +20,6 @@ class ImageUpload(ImageCreationBase):
 
     def form_valid(self, form):
         data = form.cleaned_data
-        image_model = ImageUploadService(self.request.user, data).create_draft()
+        image_model = ImageUploadService(self.request.user, data['image']).upload()
         Recognition(image_model).execute()
         return super(ImageUpload, self).form_valid(form)
