@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import path, re_path
 
-from apps.image.views.download_image import DownloadImage
+from apps.image.views.download_image import ImageDownload
 from apps.image.views.image_post.image_post_creation.image_post_create import ImagePostCreate
 from apps.image.views.image_post.image_post_creation.image_upload import ImageUpload
 from apps.image.views.image_post.image_post_delete import ImagePostDelete
@@ -15,6 +15,7 @@ from apps.image.views.shared.by_user.image_shared_by_user_delete import ImageSha
 from apps.image.views.shared.by_user.image_shared_by_user_list import ImageSharedByUserList
 
 app_name = 'image'
+NUMERIC_SLUG_RE = r'^(?P<slug>\d+)/$'
 
 urlpatterns = [
     path('', ImagePostList.as_view(), name='image-post-list'),
@@ -23,22 +24,22 @@ urlpatterns = [
     path('upload/', ImageUpload.as_view(), name='image-upload'),
     path('new/', ImagePostCreate.as_view(), name='image-post-create'),
 
+    re_path(r'^(?P<slug>\d+)/$', ImagePostDetail.as_view(), name='image-post-detail'),
+    re_path(r'^(?P<slug>\d+)/edit/$', ImagePostEdit.as_view(), name='image-post-edit'),
+    re_path(r'^(?P<slug>\d+)/delete/$', ImagePostDelete.as_view(), name='image-post-delete'),
+    re_path(r'^(?P<slug>\d+)/share/$', ImagePostShare.as_view(), name='image-post-share'),
+    re_path(r'^(?P<slug>\d+)/download/$', ImageDownload.as_view(), name='image-download'),
+
     path('shared/', ImageSharedList.as_view(), name='shared'),
     path('shared/tag/<slug:tag_slug>/', ImageSharedList.as_view(), name='shared-by-tag'),
     path('shared/person/<slug:person_slug>/', ImageSharedList.as_view(), name='shared-by-person'),
-    path('shared/<slug:slug>/delete/', ImageSharedDelete.as_view(), name='shared-delete'),
-    path('shared/<slug:slug>/', ImageSharedDetail.as_view(), name='shared-detail'),
+    re_path(r'^shared/(?P<slug>\d+)/delete/$', ImageSharedDelete.as_view(), name='shared-delete'),
+    re_path(r'^shared/(?P<slug>\d+)/$', ImageSharedDetail.as_view(), name='shared-detail'),
 
     path('shared-by-user/', ImageSharedByUserList.as_view(), name='shared-by-user'),
     path('shared-by-user/tag/<slug:tag_slug>/', ImageSharedByUserList.as_view(), name='shared-by-user-by-tag'),
     path('shared-by-user/person/<slug:person_slug>/', ImageSharedByUserList.as_view(), name='shared-by-user-by-person'),
-    path('shared-by-user/<slug:slug><int:recipient_id>/delete/', ImageSharedByUserDelete.as_view(),
-         name='shared-by-user-delete'),
+    re_path(r'^shared-by-user/(?P<slug>\d+)-(?P<recipient_id>\d+)/delete/$', ImageSharedByUserDelete.as_view(),
+            name='shared-by-user-delete'),
 
-    path('<slug:slug>/', ImagePostDetail.as_view(), name='image-post-detail'),
-    path('<slug:slug>/edit/', ImagePostEdit.as_view(), name='image-post-edit'),
-    path('<slug:slug>/delete/', ImagePostDelete.as_view(), name='image-post-delete'),
-    path('<slug:slug>/share/', ImagePostShare.as_view(), name='image-post-share'),
-
-    path('<slug:slug>/download/', DownloadImage.as_view(), name='image-download'),
 ]
