@@ -17,9 +17,6 @@ class ImagePostCreate(ImageCreationBase):
         super(ImagePostCreate, self).__init__()
         self._image_model = None
 
-    def obtain_context_attrs(self):
-        self._image_model = self.get_draft_if_exists().first()
-
     def setup_form_view_attrs(self):
         self.initial = {
             'faces': self._image_model.facemodel_set.all(),
@@ -30,14 +27,18 @@ class ImagePostCreate(ImageCreationBase):
             'object': self._image_model,
         }
 
-    def dispatch(self, request, *args, **kwargs):
-        self.obtain_context_attrs()
+    def get(self, request, *args, **kwargs):
+        self._image_model = self.get_draft_if_exists().first()
         if not self._image_model:
             return redirect(self.upload_url)
         self.setup_form_view_attrs()
-        return super(ImagePostCreate, self).dispatch(request, *args, **kwargs)
+        return super(ImagePostCreate, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        self._image_model = self.get_draft_if_exists().first()
+        if not self._image_model:
+            return redirect(self.upload_url)
+        self.setup_form_view_attrs()
         if 'cancel' in request.POST:
             self._image_model.delete()
             return redirect(self.upload_url)

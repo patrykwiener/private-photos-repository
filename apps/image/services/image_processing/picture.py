@@ -13,11 +13,11 @@ from apps.image.services.image_processing.picture_exif_info import PictureExifIn
 class Picture:
 
     def __init__(self, image, file_format, size):
-        self._picture = deepcopy(image)  # type: Image
+        self._picture = image  # type: Image
         self._file_format = file_format
         self._exif_info = PictureExifInfo.create(image)
-        self._picture.thumbnail(size, Image.ANTIALIAS)
         self._original_size = image.size  # type: Tuple[int]
+        self._picture.thumbnail(size, Image.ANTIALIAS)
 
     def rotate_when_turned(self):
         image = self._picture
@@ -39,17 +39,18 @@ class Picture:
     def convert_to_rgb(image):
         rgb = 'RGB'
         if image.mode != rgb:
-            image = image.convert(rgb)
+            return image.convert(rgb)
         return image
 
     @classmethod
     def create_pic(cls, image, size=None):
-        with Image.open(image) as image:
-            file_format = image.format
-            image = cls.convert_to_rgb(image)
-            instance = cls(image, file_format, size)
-            instance._picture = instance.rotate_when_turned()
-            return instance
+        with image.open() as image:
+            with Image.open(image) as image_opened:
+                file_format = image_opened.format
+                image_rgb = cls.convert_to_rgb(image_opened)
+                instance = cls(image_rgb, file_format, size)
+                instance._picture = instance.rotate_when_turned()
+        return instance
 
     @property
     def exif_info(self):
@@ -70,6 +71,9 @@ class Picture:
     @property
     def pic_size(self) -> Tuple[int]:
         return self._picture.size
+
+    def close(self):
+        self._picture.close()
 
 
 class Thumbnail(Picture):

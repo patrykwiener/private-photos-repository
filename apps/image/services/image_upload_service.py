@@ -17,11 +17,13 @@ class ImageUploadService:
     def upload(self):
         self._add_image()
 
-        pic = Thumbnail.create_pic(self._image)
+        pic = Thumbnail.create_pic(self._image_model.image)
 
         self._add_thumbnail(pic)
         self._add_gps_coordinates(pic)
         self._add_image_taken_date_time(pic)
+        pic.close()
+
         self._image_model.save()
         return self._image_model
 
@@ -35,10 +37,9 @@ class ImageUploadService:
             self._image_model.longitude = longitude
 
     def _add_thumbnail(self, pic):
-        with pic.content_file as thumbnail:
-            name, extension = os.path.splitext(self._image.name)
-            thumbnail_name = '{}_thumb{}'.format(name, extension)
-            self._image_model.thumbnail.save(thumbnail_name, thumbnail)
+        name, extension = os.path.splitext(self._image.name)
+        thumbnail_name = '{}_thumb{}'.format(name, extension)
+        self._image_model.thumbnail.save(thumbnail_name, pic.content_file)
 
     def _add_image_taken_date_time(self, pic):
         if not pic.exif_info:
@@ -54,3 +55,4 @@ class ImageUploadService:
 
     def _add_image(self):
         self._image_model.image = self._image
+        self._image_model.save()
