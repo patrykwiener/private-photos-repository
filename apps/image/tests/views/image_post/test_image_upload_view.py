@@ -4,27 +4,31 @@ import shutil
 from django.conf import settings
 from django.urls import reverse
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
+from apps.image.tests.views.test_image_view_base import TestImageViewBase
 from private_photos_repository.settings import MEDIA_ROOT
 
 
-class TestImageUploadView(TestImagePostViewBase):
-    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImageUploadView(TestImageViewBase):
+    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):
         settings.MEDIA_ROOT += 'test'
         super().setUpTestData()
 
-    def test_upload_denies_anonymous(self):
-        response = self.client.get(reverse('image:image-upload'))
+    @property
+    def view_url(self):
+        return reverse('image:image-upload')
+
+    def test_denies_anonymous(self):
+        response = self.client.get(self.view_url)
         self.assertEqual(response.status_code, 302)
-        response = self.client.post(reverse('image:image-upload'))
+        response = self.client.post(self.view_url)
         self.assertEqual(response.status_code, 302)
 
     def test_upload_get(self):
         self.login()
-        response = self.client.get(reverse('image:image-upload'))
+        response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_upload.html')
@@ -34,7 +38,7 @@ class TestImageUploadView(TestImagePostViewBase):
         ImageModel.objects.create(user=self.user)
 
         expected_url = reverse('image:image-post-create')
-        response = self.client.get(reverse('image:image-upload'))
+        response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, expected_url)
@@ -43,7 +47,7 @@ class TestImageUploadView(TestImagePostViewBase):
         self.login()
         image_path = os.path.join(MEDIA_ROOT, 'sample_data/images/test_image.jpg')
         with open(image_path, 'rb') as image:
-            response = self.client.post(reverse('image:image-upload'), {
+            response = self.client.post(self.view_url, {
                 'image': image
             })
 

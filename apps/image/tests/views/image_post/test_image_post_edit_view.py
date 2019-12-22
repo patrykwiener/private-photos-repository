@@ -2,27 +2,31 @@ from datetime import datetime
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
+from apps.image.tests.views.test_image_view_base import TestImageViewBase
 
 
-class TestImagePostEditView(TestImagePostViewBase):
-    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostEditView(TestImageViewBase):
+    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
         cls.image_post = ImageModel.published.get(user=cls.user, id=1)
 
-    def test_create_denies_anonymous(self):
-        response = self.client.get(reverse('image:image-post-edit', args=[self.image_post.slug]))
+    @property
+    def view_url(self):
+        return reverse('image:image-post-edit', args=[self.image_post.slug])
+
+    def test_denies_anonymous(self):
+        response = self.client.get(self.view_url)
         self.assertEqual(response.status_code, 302)
-        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]))
+        response = self.client.post(self.view_url)
         self.assertEqual(response.status_code, 302)
 
     def test_edit_get(self):
         self.login()
 
-        response = self.client.get(reverse('image:image-post-edit', args=[self.image_post.slug]))
+        response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_post_create.html')
@@ -31,7 +35,7 @@ class TestImagePostEditView(TestImagePostViewBase):
     def test_edit_post_cancel(self):
         self.login()
 
-        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
+        response = self.client.post(self.view_url, {
             'cancel': 'Cancel'
         })
 
@@ -48,7 +52,7 @@ class TestImagePostEditView(TestImagePostViewBase):
         tags = self.image_post.tags
         datetime_taken = self.image_post.datetime_taken
 
-        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
+        response = self.client.post(self.view_url, {
             'upload': 'Upload',
             'face_1': person_names[0],
             'face_2': person_names[1],
@@ -82,7 +86,7 @@ class TestImagePostEditView(TestImagePostViewBase):
     def test_edit_post_blank(self):
         self.login()
 
-        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
+        response = self.client.post(self.view_url, {
             'upload': 'Upload',
             'face_1': '',
             'face_2': '',
@@ -127,7 +131,7 @@ class TestImagePostEditView(TestImagePostViewBase):
         tags = ['some tag', 'another_tag']
         datetime_taken = datetime.now()
 
-        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
+        response = self.client.post(self.view_url, {
             'upload': 'Upload',
             'face_1': person_names[0],
             'face_2': person_names[1],
@@ -161,4 +165,3 @@ class TestImagePostEditView(TestImagePostViewBase):
 
         image_query_set = image_query_set.filter(facemodel__person__full_name__in=person_names).distinct()
         self.assertTrue(image_query_set.exists())
-

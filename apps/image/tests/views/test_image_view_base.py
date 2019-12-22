@@ -5,7 +5,7 @@ from django.test import TestCase
 from apps.users.models import CustomUser
 
 
-class TestImagePostViewBase(TestCase, metaclass=abc.ABCMeta):
+class TestImageViewBase(TestCase, metaclass=abc.ABCMeta):
     fixtures = ['apps/users/fixtures/test_data.json']
     user = None
 
@@ -15,3 +15,8 @@ class TestImagePostViewBase(TestCase, metaclass=abc.ABCMeta):
 
     def login(self):
         self.client.force_login(self.user)
+
+    @property
+    @abc.abstractmethod
+    def view_url(self):
+        return None

@@ -1,19 +1,25 @@
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
+from apps.image.tests.views.test_image_view_base import TestImageViewBase
 
 
-class TestImagePostListView(TestImagePostViewBase):
-    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostListView(TestImageViewBase):
+    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
 
-    def test_list_denies_anonymous(self):
-        response = self.client.get(reverse('image:image-post-list'))
+    @property
+    def view_url(self):
+        return reverse('image:image-post-list')
+
+    def test_denies_anonymous(self):
+        response = self.client.get(self.view_url)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(self.view_url)
         self.assertEqual(response.status_code, 302)
 
     def test_list_get(self):
         self.login()
-        response = self.client.get(reverse('image:image-post-list'))
+        response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_list.html')

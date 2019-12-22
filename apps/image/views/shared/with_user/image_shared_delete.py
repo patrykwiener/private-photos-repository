@@ -12,10 +12,3 @@ class ImageSharedDelete(ImageSharedDeleteBase):
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, image__slug=self.slug,
                                  recipient=self.request.user)
-
-    def get(self, request, *args, **kwargs):
-        self.extra_context = {
-            'image': get_object_or_404(ImageModel, slug=self.slug,
-                                       sharedimagemodel__recipient=self.request.user)
-        }
-        return super().get(request, *args, **kwargs)

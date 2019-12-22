@@ -1,29 +1,32 @@
 from django.urls import reverse
 from django.utils.datetime_safe import datetime
-from django.utils.timezone import make_aware
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
+from apps.image.tests.views.test_image_view_base import TestImageViewBase
 
 
-class TestImagePostCreateViews(TestImagePostViewBase):
-    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
+class TestImagePostCreateViews(TestImageViewBase):
+    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
 
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
         cls.image_post = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
 
-    def test_create_denies_anonymous(self):
-        response = self.client.get(reverse('image:image-post-create'))
+    @property
+    def view_url(self):
+        return reverse('image:image-post-create')
+
+    def test_denies_anonymous(self):
+        response = self.client.get(self.view_url)
         self.assertEqual(response.status_code, 302)
-        response = self.client.post(reverse('image:image-post-create'))
+        response = self.client.post(self.view_url)
         self.assertEqual(response.status_code, 302)
 
     def test_create_get(self):
         self.login()
 
-        response = self.client.get(reverse('image:image-post-create'))
+        response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_post_create.html')
@@ -34,7 +37,7 @@ class TestImagePostCreateViews(TestImagePostViewBase):
         self.image_post.delete()
 
         expected_url = reverse('image:image-upload')
-        response = self.client.get(reverse('image:image-post-create'))
+        response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, expected_url)
@@ -42,7 +45,7 @@ class TestImagePostCreateViews(TestImagePostViewBase):
     def test_create_post_cancel(self):
         self.login()
 
-        response = self.client.post(reverse('image:image-post-create'), {
+        response = self.client.post(self.view_url, {
             'cancel': 'Cancel'
         })
 
@@ -52,7 +55,7 @@ class TestImagePostCreateViews(TestImagePostViewBase):
     def test_create_post_blank(self):
         self.login()
 
-        response = self.client.post(reverse('image:image-post-create'), {
+        response = self.client.post(self.view_url, {
             'upload': 'Upload',
             'face_1': '',
             'face_2': '',
@@ -92,7 +95,7 @@ class TestImagePostCreateViews(TestImagePostViewBase):
         tags = ['some tag', 'another_tag']
         datetime_taken = datetime.now()
 
-        response = self.client.post(reverse('image:image-post-create'), {
+        response = self.client.post(self.view_url, {
             'upload': 'Upload',
             'face_1': person_names[0],
             'face_2': person_names[1],
