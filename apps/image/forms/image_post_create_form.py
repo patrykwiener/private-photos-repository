@@ -16,7 +16,7 @@ class ImagePostCreateForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(ImagePostCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         initial = kwargs['initial']
 
         for face in initial['faces']:

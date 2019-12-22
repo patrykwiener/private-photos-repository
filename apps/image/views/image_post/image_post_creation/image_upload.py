@@ -15,15 +15,15 @@ class ImageUpload(ImageCreationBase):
     def get(self, request, *args, **kwargs):
         if self.get_draft_if_exists():
             return redirect(self.get_success_url())
-        return super(ImageUpload, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if self.get_draft_if_exists():
             return redirect(self.get_success_url())
-        return super(ImageUpload, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         data = form.cleaned_data
         image_model = ImageUploadService(self.request.user, data['image']).upload()
         Recognition(image_model).execute()
-        return super(ImageUpload, self).form_valid(form)
+        return super().form_valid(form)

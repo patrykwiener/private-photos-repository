@@ -9,7 +9,7 @@ class TestImagePostDeleteView(TestImagePostViewBase):
 
     @classmethod
     def setUpTestData(cls):
-        super(TestImagePostDeleteView, cls).setUpTestData()
+        super().setUpTestData()
         cls.image_post = ImageModel.published.filter(user=cls.user).first()
 
     def test_delete_denies_anonymous(self):
@@ -17,7 +17,7 @@ class TestImagePostDeleteView(TestImagePostViewBase):
         self.assertEqual(response.status_code, 302)
 
     def test_delete_get(self):
-        self.client.force_login(self.user)
+        self.login()
         response = self.client.get(reverse('image:image-post-delete', args=[self.image_post.slug]))
 
         self.assertEqual(response.status_code, 200)
@@ -25,7 +25,7 @@ class TestImagePostDeleteView(TestImagePostViewBase):
         self.assertEqual(response.context['object'], self.image_post)
 
     def test_delete_post(self):
-        self.client.force_login(self.user)
+        self.login()
         response = self.client.post(reverse('image:image-post-delete', args=[self.image_post.slug]))
 
         self.assertEqual(response.status_code, 302)

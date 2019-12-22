@@ -1,61 +1,96 @@
+from datetime import datetime
 from django.urls import reverse
-from django.utils.datetime_safe import datetime
-from django.utils.timezone import make_aware
 
 from apps.image.models import ImageModel
 from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
 
 
-class TestImagePostCreateViews(TestImagePostViewBase):
-    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
+class TestImagePostEditView(TestImagePostViewBase):
+    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.image_post = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
+        cls.image_post = ImageModel.published.get(user=cls.user, id=1)
 
     def test_create_denies_anonymous(self):
-        response = self.client.get(reverse('image:image-post-create'))
+        response = self.client.get(reverse('image:image-post-edit', args=[self.image_post.slug]))
         self.assertEqual(response.status_code, 302)
-        response = self.client.post(reverse('image:image-post-create'))
+        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]))
         self.assertEqual(response.status_code, 302)
 
-    def test_create_get(self):
+    def test_edit_get(self):
         self.login()
 
-        response = self.client.get(reverse('image:image-post-create'))
+        response = self.client.get(reverse('image:image-post-edit', args=[self.image_post.slug]))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_post_create.html')
         self.assertEqual(response.context['object'], self.image_post)
 
-    def test_create_redirect_when_draft_does_not_exists(self):
-        self.login()
-        self.image_post.delete()
-
-        expected_url = reverse('image:image-upload')
-        response = self.client.get(reverse('image:image-post-create'))
-
-        self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, expected_url)
-
-    def test_create_post_cancel(self):
+    def test_edit_post_cancel(self):
         self.login()
 
-        response = self.client.post(reverse('image:image-post-create'), {
+        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
             'cancel': 'Cancel'
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-upload'))
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
 
-    def test_create_post_blank(self):
+    def test_edit_post_no_changes(self):
         self.login()
 
-        response = self.client.post(reverse('image:image-post-create'), {
+        person_names = [str(face.person) for face in self.image_post.facemodel_set.all()]
+        latitude = self.image_post.latitude
+        longitude = self.image_post.longitude
+        body = self.image_post.body
+        tags = self.image_post.tags
+        datetime_taken = self.image_post.datetime_taken
+
+        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
+            'upload': 'Upload',
+            'face_1': person_names[0],
+            'face_2': person_names[1],
+            'tags': ', '.join([tag.name for tag in tags.all()]),
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+
+        image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(latitude=latitude)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(longitude=longitude)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(body=body)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(datetime_taken__contains=datetime_taken.strftime("%Y-%m-%d %H:%M"))
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(tags__in=tags.all())
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(facemodel__person__full_name__in=person_names).distinct()
+        self.assertTrue(image_query_set.exists())
+
+    def test_edit_post_blank(self):
+        self.login()
+
+        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
             'upload': 'Upload',
             'face_1': '',
             'face_2': '',
+            'latitude': '',
+            'longitude': '',
+            'body': '',
+            'tags': '',
+            'datetime_taken': '',
         })
 
         self.assertEqual(response.status_code, 302)
@@ -82,7 +117,7 @@ class TestImagePostCreateViews(TestImagePostViewBase):
         image_query_set = image_query_set.filter(facemodel__person=None)
         self.assertTrue(image_query_set.exists())
 
-    def test_create_post(self):
+    def test_edit_post(self):
         self.login()
 
         person_names = ['some person', 'another person']
@@ -92,7 +127,7 @@ class TestImagePostCreateViews(TestImagePostViewBase):
         tags = ['some tag', 'another_tag']
         datetime_taken = datetime.now()
 
-        response = self.client.post(reverse('image:image-post-create'), {
+        response = self.client.post(reverse('image:image-post-edit', args=[self.image_post.slug]), {
             'upload': 'Upload',
             'face_1': person_names[0],
             'face_2': person_names[1],
@@ -126,3 +161,4 @@ class TestImagePostCreateViews(TestImagePostViewBase):
 
         image_query_set = image_query_set.filter(facemodel__person__full_name__in=person_names).distinct()
         self.assertTrue(image_query_set.exists())
+

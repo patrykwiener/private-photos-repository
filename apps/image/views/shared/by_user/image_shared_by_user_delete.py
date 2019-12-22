@@ -11,11 +11,11 @@ class ImageSharedByUserDelete(ImageSharedDeleteBase):
     success_url = reverse_lazy('image:shared-by-user')
 
     def __init__(self):
-        super(ImageSharedByUserDelete, self).__init__()
+        super().__init__()
         self.recipient = None
 
     def setup(self, request, *args, **kwargs):
-        super(ImageSharedByUserDelete, self).setup(request, *args, **kwargs)
+        super().setup(request, *args, **kwargs)
         self.recipient = get_object_or_404(CustomUser, id=self.kwargs.get('recipient_id'))
 
     def get_object(self, queryset=None):
@@ -28,4 +28,4 @@ class ImageSharedByUserDelete(ImageSharedDeleteBase):
                                        sharedimagemodel__recipient=self.recipient),
             'recipient': self.recipient,
         }
-        return super(ImageSharedByUserDelete, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)

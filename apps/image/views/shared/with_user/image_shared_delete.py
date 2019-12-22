@@ -18,4 +18,4 @@ class ImageSharedDelete(ImageSharedDeleteBase):
             'image': get_object_or_404(ImageModel, slug=self.slug,
                                        sharedimagemodel__recipient=self.request.user)
         }
-        return super(ImageSharedDelete, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)

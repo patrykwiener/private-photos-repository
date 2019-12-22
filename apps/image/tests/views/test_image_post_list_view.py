@@ -12,7 +12,7 @@ class TestImagePostListView(TestImagePostViewBase):
         self.assertEqual(response.status_code, 302)
 
     def test_list_get(self):
-        self.client.force_login(self.user)
+        self.login()
         response = self.client.get(reverse('image:image-post-list'))
 
         self.assertEqual(response.status_code, 200)
@@ -23,7 +23,7 @@ class TestImagePostListView(TestImagePostViewBase):
         )
 
     def test_list_by_tag_get(self):
-        self.client.force_login(self.user)
+        self.login()
         slug = 'sun'
         response = self.client.get(reverse('image:image-post-list-by-slug', args=[slug]))
 
@@ -35,7 +35,7 @@ class TestImagePostListView(TestImagePostViewBase):
         )
 
     def test_list_by_person_get(self):
-        self.client.force_login(self.user)
+        self.login()
         person = 'patryk-wiener'
         response = self.client.get(
             reverse('image:image-post-list-by-person', args=[person])

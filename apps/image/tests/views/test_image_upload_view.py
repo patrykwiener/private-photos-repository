@@ -14,7 +14,7 @@ class TestImageUploadView(TestImagePostViewBase):
     @classmethod
     def setUpTestData(cls):
         settings.MEDIA_ROOT += 'test'
-        super(TestImageUploadView, cls).setUpTestData()
+        super().setUpTestData()
 
     def test_upload_denies_anonymous(self):
         response = self.client.get(reverse('image:image-upload'))
@@ -23,14 +23,14 @@ class TestImageUploadView(TestImagePostViewBase):
         self.assertEqual(response.status_code, 302)
 
     def test_upload_get(self):
-        self.client.force_login(self.user)
+        self.login()
         response = self.client.get(reverse('image:image-upload'))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_upload.html')
 
     def test_upload_redirect_when_draft_exists(self):
-        self.client.force_login(self.user)
+        self.login()
         ImageModel.objects.create(user=self.user)
 
         expected_url = reverse('image:image-post-create')
@@ -40,7 +40,7 @@ class TestImageUploadView(TestImagePostViewBase):
         self.assertURLEqual(response.url, expected_url)
 
     def test_upload_post(self):
-        self.client.force_login(self.user)
+        self.login()
         image_path = os.path.join(MEDIA_ROOT, 'sample_data/images/test_image.jpg')
         with open(image_path, 'rb') as image:
             response = self.client.post(reverse('image:image-upload'), {
@@ -57,4 +57,4 @@ class TestImageUploadView(TestImagePostViewBase):
     def tearDownClass(cls):
         if os.path.exists(settings.MEDIA_ROOT):
             shutil.rmtree(settings.MEDIA_ROOT)
-        super(TestImagePostViewBase, cls).tearDownClass()
+        super().tearDownClass()

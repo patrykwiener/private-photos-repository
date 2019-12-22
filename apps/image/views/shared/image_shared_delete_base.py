@@ -8,9 +8,9 @@ class ImageSharedDeleteBase(LoginRequiredMixin, DeleteView):
     model = SharedImageModel
 
     def __init__(self):
-        super(ImageSharedDeleteBase, self).__init__()
+        super().__init__()
         self.slug = None
 
     def setup(self, request, *args, **kwargs):
-        super(ImageSharedDeleteBase, self).setup(request, *args, **kwargs)
+        super().setup(request, *args, **kwargs)
         self.slug = self.kwargs.get('slug')

@@ -9,7 +9,7 @@ class TestImagePostDetailView(TestImagePostViewBase):
 
     @classmethod
     def setUpTestData(cls):
-        super(TestImagePostDetailView, cls).setUpTestData()
+        super().setUpTestData()
         cls.image_post = ImageModel.published.filter(user=cls.user).first()
 
     def test_detail_denies_anonymous(self):
@@ -17,7 +17,7 @@ class TestImagePostDetailView(TestImagePostViewBase):
         self.assertEqual(response.status_code, 302)
 
     def test_detail_get(self):
-        self.client.force_login(self.user)
+        self.login()
         response = self.client.get(reverse('image:image-post-detail', args=[self.image_post.slug]))
 
         self.assertEqual(response.status_code, 200)

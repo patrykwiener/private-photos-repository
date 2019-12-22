@@ -8,7 +8,7 @@ from apps.users.models import CustomUser
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super(PublishedManager, self).get_queryset().filter(status='published')
+        return super().get_queryset().filter(status='published')
 
 
 class ImageModel(models.Model):
@@ -55,7 +55,7 @@ class ImageModel(models.Model):
 
     def save(self, *args, **kwargs):
         self._set_slug()
-        super(ImageModel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def _set_slug(self):
         if not self.slug:

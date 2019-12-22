@@ -23,7 +23,7 @@ class FaceQuerySet(QuerySet):
 class FaceModel(models.Model):
 
     def __init__(self, *args, **kwargs):
-        super(FaceModel, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._original_person = self.person
 
     objects = FaceQuerySet.as_manager()

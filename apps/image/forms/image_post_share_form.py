@@ -10,7 +10,7 @@ class ImagePostShareForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.user = kwargs['initial'].pop('user', None)
         self.image = kwargs['initial'].pop('image', None)
-        super(ImagePostShareForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
