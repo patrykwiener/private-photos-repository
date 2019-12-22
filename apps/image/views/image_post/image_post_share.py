@@ -20,13 +20,16 @@ class ImagePostShare(LoginRequiredMixin, FormView):
         slug = self.kwargs.get('slug')
         return get_object_or_404(ImageModel, user=self.request.user, slug=slug, status=ImageModel.PUBLISHED)
 
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.extra_context = {
             'object': self.image,
         }
-        return super().dispatch(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        self.extra_context = {
+            'object': self.image,
+        }
         self.initial = {
             'user': self.request.user,
             'image': self.image

@@ -102,7 +102,7 @@
     "pk": 1,
     "fields": {
       "user": [
-        "testuser"
+        "testadmin"
       ],
       "image": "sample_data/images/test_image.jpg",
       "thumbnail": "sample_data/thumbnails/test_image_thumb.jpg",
@@ -120,7 +120,7 @@
     "pk": 2,
     "fields": {
       "user": [
-        "testuser"
+        "testadmin"
       ],
       "image": "sample_data/images/test_image1.jpg",
       "thumbnail": "sample_data/thumbnails/test_image1_thumb.jpg",
