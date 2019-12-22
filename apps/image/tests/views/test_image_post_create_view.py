@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import make_aware
 
-from apps.image.models import ImageModel, RecognizedPersonModel
+from apps.image.models import ImageModel
 from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
 
 
