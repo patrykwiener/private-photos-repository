@@ -5,14 +5,15 @@ from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBa
 
 
 class TestImagePostListView(TestImagePostViewBase):
+    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data.json']
 
     def test_list_denies_anonymous(self):
-        response = self._client.get(reverse('image:image-post-list'))
+        response = self.client.get(reverse('image:image-post-list'))
         self.assertEqual(response.status_code, 302)
 
     def test_list_get(self):
-        self._client.force_login(self._user)
-        response = self._client.get(reverse('image:image-post-list'))
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('image:image-post-list'))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_list.html')
@@ -22,9 +23,9 @@ class TestImagePostListView(TestImagePostViewBase):
         )
 
     def test_list_by_tag_get(self):
-        self._client.force_login(self._user)
+        self.client.force_login(self.user)
         slug = 'sun'
-        response = self._client.get(reverse('image:image-post-list-by-slug', args=[slug]))
+        response = self.client.get(reverse('image:image-post-list-by-slug', args=[slug]))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_list.html')
@@ -34,15 +35,15 @@ class TestImagePostListView(TestImagePostViewBase):
         )
 
     def test_list_by_person_get(self):
-        self._client.force_login(self._user)
+        self.client.force_login(self.user)
         person = 'patryk-wiener'
-        response = self._client.get(
+        response = self.client.get(
             reverse('image:image-post-list-by-person', args=[person])
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_list.html')
         self.assertCountEqual(
-            ImageModel.objects.filter(facemodel__person__slug=person, user=self._user),
+            ImageModel.objects.filter(facemodel__person__slug=person, user=self.user),
             response.context['object_list']
         )

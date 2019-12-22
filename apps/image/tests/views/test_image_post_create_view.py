@@ -1,100 +1,133 @@
-import os
-
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from django.utils.datetime_safe import datetime
+from django.utils.timezone import make_aware
 
-from apps.image.models import ImageModel
-from apps.image.services.image_upload_service import ImageUploadService
+from apps.image.models import ImageModel, RecognizedPersonModel
 from apps.image.tests.views.test_image_post_view_base import TestImagePostViewBase
-from private_photos_repository.settings import MEDIA_ROOT
 
 
 class TestImagePostCreateViews(TestImagePostViewBase):
+    fixtures = TestImagePostViewBase.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
 
-    # @staticmethod
-    # def create_image_post(user):
-    #     image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-    #                               'test_data/../../../../fixtures/sample_data/test_image.jpg')
-    #
-    #     with open(image_path, 'rb') as file:
-    #         uploaded_image = SimpleUploadedFile(name='test_image.jpg', content=file.read(),
-    #                                             content_type='image/jpeg')
-    #
-    #     image_post = ImageUploadService(user, uploaded_image).upload()
-    #     Recognition(image_post).execute()
-    #
-    #     data = {
-    #         'latitude': 0.0,
-    #         'longitude': 0.0,
-    #         'body': 'Sample Body',
-    #         'tags': ['sampletag1', 'sampletag2'],
-    #     }
-    #
-    #     ImagePostCreateService(image_post, data).execute()
-    #
-    #     data = {
-    #         'face_1': 'Sample Name1',
-    #         'face_2': 'Sample Name2'
-    #     }
-    #
-    #     RecognizedPeopleService(image_post.facemodel_set.all(), data).save_recognized_face()
-    #
-    #     return image_post
-
-    def create_image_post_draft(self):
-        image_path = os.path.join(MEDIA_ROOT, 'sample_data/images/test_image1.jpg')
-        with open(image_path, 'rb') as file:
-            image = SimpleUploadedFile(name='test_image.jpg', content=file.read(), content_type='image/jpeg')
-        return ImageUploadService(self._user, image).upload()
+    @classmethod
+    def setUpTestData(cls):
+        super(TestImagePostCreateViews, cls).setUpTestData()
+        cls.image_post = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
 
     def test_create_denies_anonymous(self):
-        response = self._client.get(reverse('image:image-post-create'))
+        response = self.client.get(reverse('image:image-post-create'))
         self.assertEqual(response.status_code, 302)
-        response = self._client.post(reverse('image:image-post-create'))
+        response = self.client.post(reverse('image:image-post-create'))
         self.assertEqual(response.status_code, 302)
 
     def test_create_get(self):
-        self._client.force_login(self._user)
+        self.client.force_login(self.user)
 
-        image_post = self.create_image_post_draft()
-        response = self._client.get(reverse('image:image-post-create'))
+        response = self.client.get(reverse('image:image-post-create'))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'image/image_post_create.html')
-        self.assertEqual(response.context['object'], image_post)
+        self.assertEqual(response.context['object'], self.image_post)
 
     def test_create_redirect_when_draft_does_not_exists(self):
-        self._client.force_login(self._user)
+        self.client.force_login(self.user)
+        self.image_post.delete()
 
         expected_url = reverse('image:image-upload')
-        response = self._client.get(reverse('image:image-post-create'))
+        response = self.client.get(reverse('image:image-post-create'))
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, expected_url)
 
     def test_create_post_cancel(self):
-        self._client.force_login(self._user)
+        self.client.force_login(self.user)
 
-        response = self._client.post(reverse('image:image-post-create'), {
+        response = self.client.post(reverse('image:image-post-create'), {
             'cancel': 'Cancel'
         })
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, reverse('image:image-upload'))
 
-    def test_create_post(self):
-        self._client.force_login(self._user)
+    def test_create_post_blank(self):
+        self.client.force_login(self.user)
 
-        image_post = self.create_image_post_draft()
-        response = self._client.post(reverse('image:image-post-create'), {
-            'upload': 'Upload'
+        response = self.client.post(reverse('image:image-post-create'), {
+            'upload': 'Upload',
+            'face_1': '',
+            'face_2': '',
+        })
+        self.image_post.status = ImageModel.PUBLISHED
+        for face in self.image_post.facemodel_set.all():
+            face.person = None
+
+        self.assertEqual(response.status_code, 302)
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+
+        image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(latitude=None)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(longitude=None)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(body='')
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(datetime_taken=None)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(tags=None)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(facemodel__person=None)
+        self.assertTrue(image_query_set.exists())
+
+    def test_create_post(self):
+        self.client.force_login(self.user)
+
+        person_names = ['Patryk Wiener', 'Anna Wojdan']
+
+        latitude = 50.3785
+        longitude = 14.9706
+        body = 'body test'
+        tags = ['some tag', 'another_tag']
+        datetime_taken = datetime.now()
+
+        response = self.client.post(reverse('image:image-post-create'), {
+            'upload': 'Upload',
+            'face_1': person_names[0],
+            'face_2': person_names[1],
+            'latitude': latitude,
+            'longitude': longitude,
+            'body': body,
+            'tags': ', '.join(tags),
+            'datetime_taken': datetime_taken.strftime("%Y-%m-%dT%H:%M"),
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[image_post.slug]))
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
 
-        image_query_set = ImageModel.published.filter(user=self._user, id=image_post.id)
+        image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
         self.assertTrue(image_query_set.exists())
 
-        image_post.status = ImageModel.PUBLISHED
-        self.assertEqual(image_post, image_query_set.first())
+        image_query_set = image_query_set.filter(latitude=latitude)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(longitude=longitude)
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(body=body)
+        self.assertTrue(image_query_set.exists())
+
+        datetime_taken = make_aware(datetime_taken)
+        image_query_set = image_query_set.filter(datetime_taken__contains=datetime_taken.strftime("%Y-%m-%d %H:%M"))
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(tags__name__in=tags).distinct()
+        self.assertTrue(image_query_set.exists())
+
+        image_query_set = image_query_set.filter(facemodel__person__full_name__in=person_names).distinct()
+        self.assertTrue(image_query_set.exists())

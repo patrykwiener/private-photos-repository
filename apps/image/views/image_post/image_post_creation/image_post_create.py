@@ -43,8 +43,7 @@ class ImagePostCreate(ImageCreationBase):
             self._image_model.delete()
             return redirect(self.upload_url)
         elif 'upload' in request.POST:
-            post_result = super(ImagePostCreate, self).post(request, *args, **kwargs)
-            return post_result
+            return super(ImagePostCreate, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         ImagePostCreateService(self._image_model, form.cleaned_data).execute()

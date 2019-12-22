@@ -1,0 +1,20 @@
+[
+  {
+    "model": "users.customuser",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$150000$B2njoXGr3K4W$ddd38sN/xqAt0Q4h6w41b9MWJflD1o0NQYnkZXSP96w=",
+      "last_login": "2019-12-18T15:05:00.755Z",
+      "is_superuser": true,
+      "username": "testuser",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2019-12-18T14:35:46.288Z",
+      "email": "testuser@domain.com",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]
