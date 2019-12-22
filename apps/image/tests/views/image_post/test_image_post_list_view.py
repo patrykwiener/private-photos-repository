@@ -1,11 +1,11 @@
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 
 
-class TestImagePostListView(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostListView(TestImageViewMixin):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
 
     @property
     def view_url(self):

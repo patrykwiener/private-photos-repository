@@ -1,12 +1,12 @@
 from django.urls import reverse
 
 from apps.image.models import ImageModel, SharedImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 from apps.users.models import CustomUser
 
 
-class TestImagePostShareView(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostShareView(TestImageViewMixin):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):

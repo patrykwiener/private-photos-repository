@@ -1,38 +1,16 @@
+from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_delete_view_mixin import TestDeleteViewMixin
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 
 
-class TestImagePostDeleteView(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostDeleteView(TestDeleteViewMixin, TestCase):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
+    template = 'image/image_post_delete.html'
 
     @classmethod
     def setUpTestData(cls):
-        super().setUpTestData()
-        cls.image_post = ImageModel.published.filter(user=cls.user).first()
-
-    @property
-    def view_url(self):
-        return reverse('image:image-post-delete', args=[self.image_post.slug])
-
-    def test_denies_anonymous(self):
-        response = self.client.get(self.view_url)
-        self.assertEqual(response.status_code, 302)
-        response = self.client.post(self.view_url)
-        self.assertEqual(response.status_code, 302)
-
-    def test_delete_get(self):
-        self.login()
-        response = self.client.get(self.view_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'image/image_post_delete.html')
-        self.assertEqual(response.context['object'], self.image_post)
-
-    def test_delete_post(self):
-        self.login()
-        response = self.client.post(self.view_url)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRaises(self.image_post.DoesNotExist, lambda: ImageModel.published.get(id=self.image_post.id))
+        cls.model_instance = ImageModel.published.filter(user=TestDeleteViewMixin.user).first()
+        cls.view_url = reverse('image:image-post-delete', args=[cls.model_instance.slug])

@@ -2,11 +2,11 @@ from datetime import datetime
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 
 
-class TestImagePostEditView(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostEditView(TestImageViewMixin):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):

@@ -2,14 +2,15 @@ import os
 import shutil
 
 from django.conf import settings
+from django.test import TestCase
 from django.urls import reverse
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 from private_photos_repository.settings import MEDIA_ROOT
 
 
-class TestImageUploadView(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImageUploadView(TestImageViewMixin, TestCase):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):
@@ -19,12 +20,6 @@ class TestImageUploadView(TestImageViewBase):
     @property
     def view_url(self):
         return reverse('image:image-upload')
-
-    def test_denies_anonymous(self):
-        response = self.client.get(self.view_url)
-        self.assertEqual(response.status_code, 302)
-        response = self.client.post(self.view_url)
-        self.assertEqual(response.status_code, 302)
 
     def test_upload_get(self):
         self.login()

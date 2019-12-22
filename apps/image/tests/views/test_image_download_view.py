@@ -2,14 +2,15 @@ import os
 from io import BytesIO
 
 from PIL import Image, ImageChops
+from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 
 
-class TestImageDownloadView(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImageDownloadView(TestImageViewMixin, TestCase):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
 
     @classmethod
     def setUpTestData(cls):
@@ -23,12 +24,6 @@ class TestImageDownloadView(TestImageViewBase):
     @staticmethod
     def get_bbox_difference(img1, img2):
         return ImageChops.difference(img1, img2).getbbox()
-
-    def test_denies_anonymous(self):
-        response = self.client.get(self.view_url)
-        self.assertEqual(response.status_code, 302)
-        response = self.client.post(self.view_url)
-        self.assertEqual(response.status_code, 302)
 
     def test_share_get(self):
         self.login()

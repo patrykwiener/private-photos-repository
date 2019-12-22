@@ -1,12 +1,13 @@
+from django.test import TestCase
 from django.urls import reverse
 from django.utils.datetime_safe import datetime
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_base import TestImageViewBase
+from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
 
 
-class TestImagePostCreateViews(TestImageViewBase):
-    fixtures = TestImageViewBase.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
+class TestImagePostCreateViews(TestImageViewMixin, TestCase):
+    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
 
     @classmethod
     def setUpTestData(cls):
@@ -16,12 +17,6 @@ class TestImagePostCreateViews(TestImageViewBase):
     @property
     def view_url(self):
         return reverse('image:image-post-create')
-
-    def test_denies_anonymous(self):
-        response = self.client.get(self.view_url)
-        self.assertEqual(response.status_code, 302)
-        response = self.client.post(self.view_url)
-        self.assertEqual(response.status_code, 302)
 
     def test_create_get(self):
         self.login()
