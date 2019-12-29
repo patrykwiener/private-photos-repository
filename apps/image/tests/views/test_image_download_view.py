@@ -14,12 +14,8 @@ class TestImageDownloadView(TestImageViewMixin, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super().setUpTestData()
-        cls.image_post = ImageModel.published.get(user=cls.user, id=1)
-
-    @property
-    def view_url(self):
-        return reverse('image:image-download', args=[self.image_post.slug])
+        cls.model_instance = ImageModel.published.get(user=cls.user, id=1)
+        cls.view_url = reverse('image:image-download', args=[cls.model_instance.slug])
 
     @staticmethod
     def get_bbox_difference(img1, img2):
@@ -28,11 +24,11 @@ class TestImageDownloadView(TestImageViewMixin, TestCase):
     def test_share_get(self):
         self.login()
 
-        response = self.client.get(self.view_url)
+        response = self.client.get(self.get_view_url())
 
         self.assertEqual(response.status_code, 200)
 
-        file_name = os.path.basename(self.image_post.image.name)
+        file_name = os.path.basename(self.model_instance.image.name)
         response_content_disposition = 'attachment; filename={}'.format(file_name)
         self.assertEqual(response.get('Content-Disposition'), response_content_disposition)
 
@@ -40,5 +36,5 @@ class TestImageDownloadView(TestImageViewMixin, TestCase):
             self.assertGreater(len(response_bytes_io.read()), 0)
 
             with Image.open(response_bytes_io) as response_pil:
-                with Image.open(self.image_post.image.path) as reference_pil:
+                with Image.open(self.model_instance.image.path) as reference_pil:
                     self.assertTrue(self.get_bbox_difference(response_pil, reference_pil) is None)

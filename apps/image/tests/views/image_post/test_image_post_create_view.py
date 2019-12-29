@@ -15,6 +15,7 @@ class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
         cls.model_instance = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
         cls.view_url = reverse('image:image-post-create')
         cls.cancel_url = reverse('image:image-upload')
+        cls.success_url = reverse('image:image-post-detail', args=[cls.model_instance.slug])
         cls.image_post = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
 
     def test_create_redirect_when_draft_does_not_exists(self):
@@ -22,7 +23,7 @@ class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
         self.image_post.delete()
 
         expected_url = reverse('image:image-upload')
-        response = self.client.get(self.view_url)
+        response = self.client.get(self.get_view_url())
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, expected_url)
@@ -30,14 +31,14 @@ class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
     def test_create_post_blank(self):
         self.login()
 
-        response = self.client.post(self.view_url, {
+        response = self.client.post(self.get_view_url(), {
             'upload': 'Upload',
             'face_1': '',
             'face_2': '',
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+        self.assertURLEqual(response.url, self.success_url)
 
         image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
         self.assertTrue(image_query_set.exists())
@@ -70,7 +71,7 @@ class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
         tags = ['some tag', 'another_tag']
         datetime_taken = datetime.now()
 
-        response = self.client.post(self.view_url, {
+        response = self.client.post(self.get_view_url(), {
             'upload': 'Upload',
             'face_1': person_names[0],
             'face_2': person_names[1],
@@ -82,7 +83,7 @@ class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+        self.assertURLEqual(response.url, self.success_url)
 
         image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
         self.assertTrue(image_query_set.exists())

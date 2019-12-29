@@ -2,11 +2,11 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.mixins.test_detail_view_mixin import TestDetailViewMixin
+from apps.image.tests.views.mixins.test_single_object_view_mixin import TestSingleObjectViewMixin
 
 
-class TestSharedDetailView(TestDetailViewMixin, TestCase):
-    fixtures = TestDetailViewMixin.fixtures + ['apps/image/fixtures/test_data_shared.json']
+class TestSharedDetailView(TestSingleObjectViewMixin, TestCase):
+    fixtures = TestSingleObjectViewMixin.fixtures + ['apps/image/fixtures/test_data_shared.json']
     template = 'image/shared_image_detail.html'
 
     @classmethod

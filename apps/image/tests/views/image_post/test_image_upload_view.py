@@ -11,29 +11,26 @@ from private_photos_repository.settings import MEDIA_ROOT
 
 class TestImageUploadView(TestImageViewMixin, TestCase):
     fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
+    template = 'image/image_upload.html'
 
     @classmethod
     def setUpTestData(cls):
         settings.MEDIA_ROOT += 'test'
-        super().setUpTestData()
-
-    @property
-    def view_url(self):
-        return reverse('image:image-upload')
+        cls.view_url = reverse('image:image-upload')
 
     def test_upload_get(self):
         self.login()
-        response = self.client.get(self.view_url)
+        response = self.client.get(self.get_view_url())
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'image/image_upload.html')
+        self.assertTemplateUsed(response, self.template)
 
     def test_upload_redirect_when_draft_exists(self):
         self.login()
         ImageModel.objects.create(user=self.user)
 
         expected_url = reverse('image:image-post-create')
-        response = self.client.get(self.view_url)
+        response = self.client.get(self.get_view_url())
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, expected_url)
@@ -42,7 +39,7 @@ class TestImageUploadView(TestImageViewMixin, TestCase):
         self.login()
         image_path = os.path.join(MEDIA_ROOT, 'sample_data/images/test_image.jpg')
         with open(image_path, 'rb') as image:
-            response = self.client.post(self.view_url, {
+            response = self.client.post(self.get_view_url(), {
                 'image': image
             })
 
