@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixins.test_image_view_mixin import TestImageViewMixin
 
 
 class TestImageDownloadView(TestImageViewMixin, TestCase):

@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
 
-class TestSingleObjectMixin:
+class SingleObjectMixin:
     model_instance = None
 
     def get_model_instance(self):

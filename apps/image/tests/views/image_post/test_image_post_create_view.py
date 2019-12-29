@@ -3,29 +3,19 @@ from django.urls import reverse
 from django.utils.datetime_safe import datetime
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixins.test_create_view_mixin import TestCreateViewMixin
 
 
-class TestImagePostCreateViews(TestImageViewMixin, TestCase):
-    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
+class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
+    fixtures = TestCreateViewMixin.fixtures + ['apps/image/fixtures/test_data_with_draft.json']
+    template = 'image/image_post_create.html'
 
     @classmethod
     def setUpTestData(cls):
-        super().setUpTestData()
+        cls.model_instance = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
+        cls.view_url = reverse('image:image-post-create')
+        cls.cancel_url = reverse('image:image-upload')
         cls.image_post = ImageModel.objects.get(user=cls.user, status=ImageModel.DRAFT)
-
-    @property
-    def view_url(self):
-        return reverse('image:image-post-create')
-
-    def test_create_get(self):
-        self.login()
-
-        response = self.client.get(self.view_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'image/image_post_create.html')
-        self.assertEqual(response.context['object'], self.image_post)
 
     def test_create_redirect_when_draft_does_not_exists(self):
         self.login()
@@ -36,16 +26,6 @@ class TestImagePostCreateViews(TestImageViewMixin, TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, expected_url)
-
-    def test_create_post_cancel(self):
-        self.login()
-
-        response = self.client.post(self.view_url, {
-            'cancel': 'Cancel'
-        })
-
-        self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-upload'))
 
     def test_create_post_blank(self):
         self.login()

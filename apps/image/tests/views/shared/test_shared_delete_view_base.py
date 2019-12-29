@@ -1,1 +1,0 @@
-# class TestSharedDeleteViewBase(TestImageViewBase):

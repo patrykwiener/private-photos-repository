@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
 
-class TestTemplateMixin:
+class TemplateMixin:
     template = None
 
     def get_template(self):

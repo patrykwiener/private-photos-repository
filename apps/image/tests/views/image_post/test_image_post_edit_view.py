@@ -1,56 +1,31 @@
 from datetime import datetime
+
+from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixins.test_create_view_mixin import TestCreateViewMixin
 
 
-class TestImagePostEditView(TestImageViewMixin):
-    fixtures = TestImageViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
+class TestImagePostEditView(TestCreateViewMixin, TestCase):
+    fixtures = TestCreateViewMixin.fixtures + ['apps/image/fixtures/test_data.json']
+    template = 'image/image_post_create.html'
 
     @classmethod
     def setUpTestData(cls):
-        super().setUpTestData()
-        cls.image_post = ImageModel.published.get(user=cls.user, id=1)
-
-    @property
-    def view_url(self):
-        return reverse('image:image-post-edit', args=[self.image_post.slug])
-
-    def test_denies_anonymous(self):
-        response = self.client.get(self.view_url)
-        self.assertEqual(response.status_code, 302)
-        response = self.client.post(self.view_url)
-        self.assertEqual(response.status_code, 302)
-
-    def test_edit_get(self):
-        self.login()
-
-        response = self.client.get(self.view_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'image/image_post_create.html')
-        self.assertEqual(response.context['object'], self.image_post)
-
-    def test_edit_post_cancel(self):
-        self.login()
-
-        response = self.client.post(self.view_url, {
-            'cancel': 'Cancel'
-        })
-
-        self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+        cls.model_instance = ImageModel.published.get(user=cls.user, id=1)
+        cls.view_url = reverse('image:image-post-edit', args=[cls.model_instance.slug])
+        cls.cancel_url = reverse('image:image-post-detail', args=[cls.model_instance.slug])
 
     def test_edit_post_no_changes(self):
         self.login()
 
-        person_names = [str(face.person) for face in self.image_post.facemodel_set.all()]
-        latitude = self.image_post.latitude
-        longitude = self.image_post.longitude
-        body = self.image_post.body
-        tags = self.image_post.tags
-        datetime_taken = self.image_post.datetime_taken
+        person_names = [str(face.person) for face in self.model_instance.facemodel_set.all()]
+        latitude = self.model_instance.latitude
+        longitude = self.model_instance.longitude
+        body = self.model_instance.body
+        tags = self.model_instance.tags
+        datetime_taken = self.model_instance.datetime_taken
 
         response = self.client.post(self.view_url, {
             'upload': 'Upload',
@@ -60,9 +35,9 @@ class TestImagePostEditView(TestImageViewMixin):
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.model_instance.slug]))
 
-        image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
+        image_query_set = ImageModel.published.filter(user=self.user, id=self.model_instance.id)
         self.assertTrue(image_query_set.exists())
 
         image_query_set = image_query_set.filter(latitude=latitude)
@@ -98,9 +73,9 @@ class TestImagePostEditView(TestImageViewMixin):
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.model_instance.slug]))
 
-        image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
+        image_query_set = ImageModel.published.filter(user=self.user, id=self.model_instance.id)
         self.assertTrue(image_query_set.exists())
 
         image_query_set = image_query_set.filter(latitude=None)
@@ -143,9 +118,9 @@ class TestImagePostEditView(TestImageViewMixin):
         })
 
         self.assertEqual(response.status_code, 302)
-        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.image_post.slug]))
+        self.assertURLEqual(response.url, reverse('image:image-post-detail', args=[self.model_instance.slug]))
 
-        image_query_set = ImageModel.published.filter(user=self.user, id=self.image_post.id)
+        image_query_set = ImageModel.published.filter(user=self.user, id=self.model_instance.id)
         self.assertTrue(image_query_set.exists())
 
         image_query_set = image_query_set.filter(latitude=latitude)

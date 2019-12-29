@@ -1,9 +1,9 @@
-from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
-from apps.image.tests.views.mixin.test_model_query_set_mixin import TestModelQuerySetMixin
-from apps.image.tests.views.mixin.test_template_mixin import TestTemplateMixin
+from apps.image.tests.views.mixins.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixins.components.model_query_set_mixin import ModelQuerySetMixin
+from apps.image.tests.views.mixins.components.template_mixin import TemplateMixin
 
 
-class TestListViewMixin(TestImageViewMixin, TestTemplateMixin, TestModelQuerySetMixin):
+class TestListViewMixin(TestImageViewMixin, TemplateMixin, ModelQuerySetMixin):
     template = None
 
     @property
@@ -19,7 +19,7 @@ class TestListViewMixin(TestImageViewMixin, TestTemplateMixin, TestModelQuerySet
         response = self.client.get(self.view_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, self.template)
+        self.assertTemplateUsed(response, self.get_template())
         self.assertCountEqual(
             self.model_query_set,
             response.context['object_list']
@@ -33,7 +33,7 @@ class TestListViewMixin(TestImageViewMixin, TestTemplateMixin, TestModelQuerySet
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, self.template)
+        self.assertTemplateUsed(response, self.get_template())
         self.assertCountEqual(
             self.model_query_set.filter(tags__slug=tag),
             response.context['object_list']
@@ -47,7 +47,7 @@ class TestListViewMixin(TestImageViewMixin, TestTemplateMixin, TestModelQuerySet
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, self.template)
+        self.assertTemplateUsed(response, self.get_template())
         self.assertCountEqual(
             self.model_query_set.filter(facemodel__person__slug=person, user=self.user),
             response.context['object_list']
