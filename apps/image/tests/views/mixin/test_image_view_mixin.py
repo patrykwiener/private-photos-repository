@@ -1,11 +1,9 @@
-import abc
-
 from django.core.exceptions import ImproperlyConfigured
 
 from apps.users.models import CustomUser
 
 
-class TestImageViewMixin(metaclass=abc.ABCMeta):
+class TestImageViewMixin:
     view_url = None
     client = None
     fixtures = ['apps/users/fixtures/test_data.json']

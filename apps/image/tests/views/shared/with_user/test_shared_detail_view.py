@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_detail_view_mixin import TestDetailViewMixin
+from apps.image.tests.views.mixin.test_detail_view_mixin import TestDetailViewMixin
 
 
 class TestSharedDetailView(TestDetailViewMixin, TestCase):

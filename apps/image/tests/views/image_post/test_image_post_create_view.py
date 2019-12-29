@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.datetime_safe import datetime
 
 from apps.image.models import ImageModel
-from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
 
 
 class TestImagePostCreateViews(TestImageViewMixin, TestCase):

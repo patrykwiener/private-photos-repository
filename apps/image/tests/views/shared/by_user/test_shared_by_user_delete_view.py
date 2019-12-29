@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.image.models import SharedImageModel
-from apps.image.tests.views.test_delete_view_mixin import TestDeleteViewMixin
-from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixin.test_delete_view_mixin import TestDeleteViewMixin
+from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
 
 
 class TestSharedByUserDeleteView(TestDeleteViewMixin, TestCase):

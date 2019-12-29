@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from apps.image.models import ImageModel, SharedImageModel
-from apps.image.tests.views.test_image_view_mixin import TestImageViewMixin
+from apps.image.tests.views.mixin.test_image_view_mixin import TestImageViewMixin
 from apps.users.models import CustomUser
 
 
