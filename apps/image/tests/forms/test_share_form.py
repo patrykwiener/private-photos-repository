@@ -40,6 +40,16 @@ class TestShareForm(TestCase):
 
         self.assertTrue(form.is_valid())
 
+    def test_form_empty_data(self):
+        form = ImagePostShareForm(
+            data={},
+            initial=self.shared_initial
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(form.errors), 1)
+        self.assertTrue('This field is required.' in form.errors['email'])
+
     def test_form_invalid_data_share_with_yourself(self):
         data = {
             'email': self.user.email
