@@ -8,8 +8,8 @@ class ImagePostShareForm(forms.Form):
     email = forms.EmailField()
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs['initial'].pop('user', None)
-        self.image = kwargs['initial'].pop('image', None)
+        self.user = kwargs.get('initial').get('user')
+        self.image = kwargs.get('initial').get('image')
         super().__init__(*args, **kwargs)
 
     def clean_email(self):
