@@ -10,7 +10,7 @@ class ImagePostListBase(LoginRequiredMixin, ListView):
     paginate_by = 100
 
     def __init__(self):
-        super(ImagePostListBase, self).__init__()
+        super().__init__()
         self.tag = None
         self.person = None
 
@@ -29,10 +29,10 @@ class ImagePostListBase(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         self.filter_by_tag()
         self.filter_by_person()
-        return super(ImagePostListBase, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ImagePostListBase, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['tag'] = self.tag
         context['person'] = self.person
         return context

@@ -9,7 +9,8 @@ from django.views import View
 from apps.image.models.image_model import ImageModel
 
 
-class DownloadImage(LoginRequiredMixin, View):
+class ImageDownload(LoginRequiredMixin, View):
+
     def get(self, request, *args, **kwargs):
         image = get_object_or_404(ImageModel, slug=kwargs['slug'], user=request.user)
         content_type = mimetypes.guess_type(image.image.name)[0]

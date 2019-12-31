@@ -41,12 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_cleanup.apps.CleanupConfig',
     'mathfilters',
     'crispy_forms',
     'widget_tweaks',
     'taggit',
     'taggit_labels',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -88,11 +88,15 @@ WSGI_APPLICATION = 'private_photos_repository.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'private_photos_repository',
+        'NAME': 'sample_private_photos_repository',
         'USER': 'private_photos_repository',
         'PASSWORD': 'root'
     }
 }
+
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, 'fixtures'),
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

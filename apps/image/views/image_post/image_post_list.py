@@ -8,5 +8,5 @@ class ImagePostList(ImagePostListBase):
     def get(self, request, *args, **kwargs):
         self.queryset = ImageModel.published.filter(user=self.request.user)
 
-        return super(ImagePostList, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 

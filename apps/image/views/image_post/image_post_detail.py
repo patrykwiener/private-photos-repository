@@ -1,10 +1,11 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 
 from apps.image.models.image_model import ImageModel
 
 
-class ImagePostDetail(DetailView):
+class ImagePostDetail(LoginRequiredMixin, DetailView):
     template_name = 'image/image_post_detail.html'
     model = ImageModel
 

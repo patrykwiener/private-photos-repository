@@ -13,9 +13,6 @@ class ImagePostEdit(LoginRequiredMixin, UpdateView):
     template_name = 'image/image_post_create.html'
     model = ImageModel
 
-    def __init__(self):
-        super(ImagePostEdit, self).__init__()
-
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
         object_to_update = get_object_or_404(self.model, user=self.request.user, slug=slug, status=self.model.PUBLISHED)
@@ -30,9 +27,9 @@ class ImagePostEdit(LoginRequiredMixin, UpdateView):
         if 'cancel' in request.POST:
             return redirect(self.get_object().get_absolute_url())
         elif 'upload' in request.POST:
-            return super(ImagePostEdit, self).post(request, *args, **kwargs)
+            return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         RecognizedPeopleService(self.object.facemodel_set.all(), form.cleaned_data).save_recognized_face()
         messages.success(self.request, 'The post has been updated!')
-        return super(ImagePostEdit, self).form_valid(form)
+        return super().form_valid(form)

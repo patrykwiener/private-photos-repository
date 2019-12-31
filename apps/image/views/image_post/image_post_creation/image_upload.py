@@ -12,14 +12,18 @@ class ImageUpload(ImageCreationBase):
     template_name = 'image/image_upload.html'
     success_url = reverse_lazy('image:image-post-create')
 
-    def dispatch(self, request, *args, **kwargs):
-        dispatch_result = super(ImageUpload, self).dispatch(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
         if self.get_draft_if_exists():
             return redirect(self.get_success_url())
-        return dispatch_result
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if self.get_draft_if_exists():
+            return redirect(self.get_success_url())
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         data = form.cleaned_data
-        image_model = ImageUploadService(self.request.user, data).create_draft()
+        image_model = ImageUploadService(self.request.user, data['image']).upload()
         Recognition(image_model).execute()
-        return super(ImageUpload, self).form_valid(form)
+        return super().form_valid(form)

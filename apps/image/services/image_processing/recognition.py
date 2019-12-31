@@ -17,10 +17,11 @@ class Recognition:
     def execute(self):
 
         pic_for_recognition = PictureForRecognition.create_pic(self._image_model.thumbnail)
-
         faces = self.find_faces(pic_for_recognition)
+        pic_for_recognition.close()
 
-        known_faces = FaceModel.objects.recognized_faces()
+        face_query = FaceModel.objects.filter(image__user=self._image_model.user)
+        known_faces = face_query.recognized_faces()
 
         if known_faces:
             faces = self.recognize_faces(known_faces, faces)
