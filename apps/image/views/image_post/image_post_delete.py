@@ -18,4 +18,4 @@ class ImagePostDelete(LoginRequiredMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         messages.success(self.request, 'The image has been deleted!')
-        return super(ImagePostDelete, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)

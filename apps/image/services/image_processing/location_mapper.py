@@ -8,6 +8,7 @@ class LocationMapper:
                           locations: List[Tuple[int]],
                           original_pic_size: Tuple[int],
                           pic_size: Tuple[int]) -> List[Tuple[int]]:
+
         factor = original_pic_size[0] / pic_size[0]
         return cls._map_locations(locations, factor)
 

@@ -16,7 +16,7 @@ class ImagePostCreateForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(ImagePostCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         initial = kwargs['initial']
 
         for face in initial['faces']:
@@ -41,7 +41,7 @@ class ImagePostCreateForm(forms.ModelForm):
     body = forms.CharField(widget=forms.Textarea(), max_length=1024, required=False)
     datetime_taken = forms.DateTimeField(label='Date time taken', required=False,
                                          widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-                                         input_formats=['%Y-%m-%dT%H:%M'])
+                                         input_formats=['%Y-%m-%d %H:%M'])
 
     tags = TagField(required=False, widget=TagWidget(attrs={
         'class': 'form-control',

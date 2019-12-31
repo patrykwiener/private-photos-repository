@@ -3,9 +3,9 @@ from apps.image.models.image_model import ImageModel
 
 class ImagePostCreateService:
 
-    def __init__(self, image_model: ImageModel, cleaned_data):
+    def __init__(self, image_model: ImageModel, data):
         self._image_model = image_model
-        self._cleaned_data = cleaned_data
+        self._data = data
 
     def execute(self, save=True):
         self.publish()
@@ -20,15 +20,15 @@ class ImagePostCreateService:
         self._image_model.status = ImageModel.PUBLISHED
 
     def add_location(self):
-        self._image_model.latitude = self._cleaned_data['latitude']
-        self._image_model.longitude = self._cleaned_data['longitude']
+        self._image_model.latitude = self._data['latitude']
+        self._image_model.longitude = self._data['longitude']
 
     def add_body(self):
-        self._image_model.body = self._cleaned_data['body']
+        self._image_model.body = self._data['body']
 
     def add_datetime_taken(self):
         if not self._image_model.datetime_taken:
-            self._image_model.datetime_taken = self._cleaned_data['datetime_taken']
+            self._image_model.datetime_taken = self._data['datetime_taken']
 
     def add_tags(self):
-        self._image_model.tags.set(*self._cleaned_data['tags'])
+        self._image_model.tags.set(*self._data['tags'])

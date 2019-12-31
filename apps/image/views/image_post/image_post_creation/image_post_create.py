@@ -14,11 +14,8 @@ class ImagePostCreate(ImageCreationBase):
     upload_url = reverse_lazy("image:image-upload")
 
     def __init__(self):
-        super(ImagePostCreate, self).__init__()
+        super().__init__()
         self._image_model = None
-
-    def obtain_context_attrs(self):
-        self._image_model = self.get_draft_if_exists().first()
 
     def setup_form_view_attrs(self):
         self.initial = {
@@ -30,23 +27,26 @@ class ImagePostCreate(ImageCreationBase):
             'object': self._image_model,
         }
 
-    def dispatch(self, request, *args, **kwargs):
-        self.obtain_context_attrs()
+    def get(self, request, *args, **kwargs):
+        self._image_model = self.get_draft_if_exists().first()
         if not self._image_model:
             return redirect(self.upload_url)
         self.setup_form_view_attrs()
-        return super(ImagePostCreate, self).dispatch(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        self._image_model = self.get_draft_if_exists().first()
+        if not self._image_model:
+            return redirect(self.upload_url)
+        self.setup_form_view_attrs()
         if 'cancel' in request.POST:
             self._image_model.delete()
             return redirect(self.upload_url)
         elif 'upload' in request.POST:
-            post_result = super(ImagePostCreate, self).post(request, *args, **kwargs)
-            return post_result
+            return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         ImagePostCreateService(self._image_model, form.cleaned_data).execute()
         RecognizedPeopleService(self._image_model.facemodel_set.all(), form.cleaned_data).save_recognized_face()
         self.success_url = self._image_model.get_absolute_url()
-        return super(ImagePostCreate, self).form_valid(form)
+        return super().form_valid(form)

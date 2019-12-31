@@ -13,6 +13,6 @@ class ImageSharedByUserList(ImageSharedListBase):
     def get(self, request, *args, **kwargs):
         self.queryset = ImageModel.published.filter(sharedimagemodel__image__user=self.request.user)
 
-        return super(ImageSharedByUserList, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
