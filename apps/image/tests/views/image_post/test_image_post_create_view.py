@@ -79,7 +79,7 @@ class TestImagePostCreateViews(TestCreateViewMixin, TestCase):
             'longitude': longitude,
             'body': body,
             'tags': ', '.join(tags),
-            'datetime_taken': datetime_taken.strftime("%Y-%m-%dT%H:%M"),
+            'datetime_taken': datetime_taken.strftime("%Y-%m-%d %H:%M"),
         })
 
         self.assertEqual(response.status_code, 302)
