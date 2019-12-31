@@ -1,4 +1,4 @@
-static/external_libs/* linguist-vendored
+static/* linguist-vendored
 static/external_libs/*/* linguist-vendored
 static/external_libs/*/*/* linguist-vendored
 static/external_libs/*/*/*/* linguist-vendored
