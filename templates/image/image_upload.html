@@ -8,12 +8,16 @@
 
 
 {% block content %}
+
     <div class="container w-75 p-3">
         <form id="form_id" action="." method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="text-left">
-                {{ form.image|as_crispy_field }}
+
+            <div class="custom-file form-group text-left" style="margin-bottom: 1rem !important;">
+                <input name="image" accept="image/*" type="file" class="custom-file-input clearablefileinput" id="id_image" required>
+                <label class="custom-file-label" for="customFile">Choose file</label>
             </div>
+
             <button id="upload-btn" class="btn btn-primary" type="submit" value="Upload Image">Upload Image
             </button>
         </form>
