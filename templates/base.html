@@ -14,8 +14,8 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/face_container.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/map.css' %}"/>
-    <link type="text/css" href="{% static 'emoji/css/emoji.css' %}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'tagsinput.css' %}"/>
+    <link type="text/css" href="{% static 'external_libs/emoji/css/emoji.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'external_libs/tags_input/tagsinput.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
 
     {% block styles %}
@@ -36,8 +36,8 @@
     <!-- Font Awesome JavaScript-->
     <script src="https://kit.fontawesome.com/215dedd947.js" crossorigin="anonymous"></script>
 
-    <script src="{% static 'css-element-queries/ElementQueries.js' %}"></script>
-    <script src="{% static 'css-element-queries/ResizeSensor.js' %}"></script>
+    <script src="{% static 'external_libs/css-element-queries/ElementQueries.js' %}"></script>
+    <script src="{% static 'external_libs/css-element-queries/ResizeSensor.js' %}"></script>
 
 </head>
 <body>
@@ -60,11 +60,11 @@
 </div>
 
 <script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>
-<script src={% static 'emoji/js/config.js' %}></script>
-<script src={% static 'emoji/js/util.js' %}></script>
-<script src={% static 'emoji/js/jquery.emojiarea.js' %}></script>
-<script src={% static 'emoji/js/emoji-picker.js' %}></script>
-<script src={% static 'tagsinput.js' %}></script>
+<script src={% static 'external_libs/emoji/js/config.js' %}></script>
+<script src={% static 'external_libs/emoji/js/util.js' %}></script>
+<script src={% static 'external_libs/emoji/js/jquery.emojiarea.js' %}></script>
+<script src={% static 'external_libs/emoji/js/emoji-picker.js' %}></script>
+<script src={% static 'external_libs/tags_input/tagsinput.js' %}></script>
 
 {% block javascript %}
 
