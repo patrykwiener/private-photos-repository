@@ -144,7 +144,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
 )
 
-MEDIA_ROOT = 'C:/Development/Python/private_photos_repository/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 MESSAGE_TAGS = {
@@ -156,7 +156,7 @@ MESSAGE_TAGS = {
 }
 
 # email
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'patrykwiener123@gmail.com'
 EMAIL_HOST_PASSWORD = 'patryksample123'
