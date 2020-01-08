@@ -1,3 +1,4 @@
 from django.contrib import admin
+from taggit.admin import Tag
 
-# Register your models here.
+admin.site.unregister(Tag)
