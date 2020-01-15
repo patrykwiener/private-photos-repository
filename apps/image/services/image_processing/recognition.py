@@ -17,20 +17,19 @@ class Recognition:
     def execute(self):
 
         pic_for_recognition = PictureForRecognition.create_pic(self._image_model.thumbnail)
-        faces = self.find_faces(pic_for_recognition)
+        faces = self._find_faces(pic_for_recognition)
         pic_for_recognition.close()
 
         face_query = FaceModel.objects.filter(image__user=self._image_model.user)
         known_faces = face_query.recognized_faces()
 
         if known_faces:
-            faces = self.recognize_faces(known_faces, faces)
+            faces = self._recognize_faces(known_faces, faces)
 
         for face in faces:
             face.save()
-        return faces
 
-    def find_faces(self, picture):
+    def _find_faces(self, picture):
         locations = face_recognition.face_locations(picture.pic_np_gray_scale, model='cnn')
         encodings = face_recognition.face_encodings(picture.pic_np, locations)
 
@@ -43,15 +42,15 @@ class Recognition:
         return faces
 
     @classmethod
-    def recognize_faces(cls, known_faces, faces: List[FaceModel], tolerance=0.6) -> List[FaceModel]:
+    def _recognize_faces(cls, known_faces, faces: List[FaceModel], tolerance=0.6) -> List[FaceModel]:
         faces = deepcopy(faces)
         for face in faces:
-            recognition_result = cls.compare_with_unknown(known_faces, face, tolerance)
+            recognition_result = cls._compare_with_unknown(known_faces, face, tolerance)
             face.person = recognition_result.recognized_person
         return faces
 
     @staticmethod
-    def compare_with_unknown(known_faces, face: FaceModel, tolerance=0.6) -> RecognitionResult:
+    def _compare_with_unknown(known_faces, face: FaceModel, tolerance=0.6) -> RecognitionResult:
         distances = face_recognition.face_distance(NumpyListConverter.to_numpy_arrays(known_faces.encodings()),
                                                    NumpyListConverter.to_numpy_array(face.encoding))
         results = list(distances <= tolerance)
