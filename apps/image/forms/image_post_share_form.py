@@ -1,3 +1,4 @@
+"""This module contains ImagePostShareForm class representing image post share form."""
 from django import forms
 
 from apps.image.models.shared_image_model import SharedImageModel
@@ -5,9 +6,7 @@ from apps.users.models import CustomUser
 
 
 class ImagePostShareForm(forms.Form):
-    """
-    Represents image post share form.
-    """
+    """Represents image post share form."""
 
     email = forms.EmailField()
 

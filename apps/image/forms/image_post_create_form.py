@@ -1,3 +1,4 @@
+"""This module contains ImagePostCreateForm class representing image post creation form."""
 from django import forms
 from taggit.forms import TagField, TagWidget
 
@@ -5,9 +6,7 @@ from apps.image.models.image_model import ImageModel
 
 
 class ImagePostCreateForm(forms.ModelForm):
-    """
-    Represents image post creation form.
-    """
+    """Represents image post creation form."""
 
     class Meta:
         model = ImageModel
