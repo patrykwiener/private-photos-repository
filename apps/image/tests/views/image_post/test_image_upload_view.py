@@ -47,7 +47,7 @@ class TestImageUploadView(TestImageViewMixin, TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertURLEqual(response.url, reverse('image:image-post-create'))
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
     @classmethod
     def tearDownClass(cls):

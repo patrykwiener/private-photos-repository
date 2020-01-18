@@ -9,5 +9,8 @@ class TestDeleteViewMixin(TestSingleObjectViewMixin):
         response = self.client.post(self.get_view_url())
 
         self.assertEqual(response.status_code, 302)
-        self.assertRaises(model_instance.DoesNotExist,
-                          lambda: model_instance.__class__.objects.get(id=model_instance.id))
+        self.assertRaisesMessage(
+            model_instance.DoesNotExist,
+            'ImageModel matching query does not exist.',
+            lambda: model_instance.__class__.objects.get(id=model_instance.id)
+        )

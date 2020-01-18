@@ -38,25 +38,25 @@ class TestImagePostEditView(TestCreateViewMixin, TestCase):
         self.assertURLEqual(response.url, self.cancel_url)
 
         image_query_set = ImageModel.published.filter(user=self.user, id=self.model_instance.id)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(latitude=latitude)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(longitude=longitude)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(body=body)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(datetime_taken__contains=datetime_taken.strftime("%Y-%m-%d %H:%M"))
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(tags__in=tags.all())
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(facemodel__person__full_name__in=person_names).distinct()
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
     def test_edit_post_blank(self):
         self.login()
@@ -76,25 +76,25 @@ class TestImagePostEditView(TestCreateViewMixin, TestCase):
         self.assertURLEqual(response.url, self.cancel_url)
 
         image_query_set = ImageModel.published.filter(user=self.user, id=self.model_instance.id)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(latitude=None)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(longitude=None)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(body='')
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(datetime_taken=None)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(tags=None)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(facemodel__person=None)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
     def test_edit_post(self):
         self.login()
@@ -121,22 +121,22 @@ class TestImagePostEditView(TestCreateViewMixin, TestCase):
         self.assertURLEqual(response.url, self.cancel_url)
 
         image_query_set = ImageModel.published.filter(user=self.user, id=self.model_instance.id)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(latitude=latitude)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(longitude=longitude)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(body=body)
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(datetime_taken__contains=datetime_taken.strftime("%Y-%m-%d %H:%M"))
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(tags__name__in=tags).distinct()
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)
 
         image_query_set = image_query_set.filter(facemodel__person__full_name__in=person_names).distinct()
-        self.assertTrue(image_query_set.exists())
+        self.assertIs(image_query_set.exists(), True)

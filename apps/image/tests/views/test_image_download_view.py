@@ -37,4 +37,4 @@ class TestImageDownloadView(TestImageViewMixin, TestCase):
 
             with Image.open(response_bytes_io) as response_pil:
                 with Image.open(self.model_instance.image.path) as reference_pil:
-                    self.assertTrue(self.get_bbox_difference(response_pil, reference_pil) is None)
+                    self.assertIsNone(self.get_bbox_difference(response_pil, reference_pil))
