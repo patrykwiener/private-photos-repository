@@ -24,12 +24,6 @@ class FaceModel(models.Model):
         super().__init__(*args, **kwargs)
         self._original_person = self.person
 
-    objects = FaceQuerySet.as_manager()
-
-    @property
-    def original_person(self):
-        return self._original_person
-
     image = models.ForeignKey(ImageModel, on_delete=models.CASCADE)
     person = models.ForeignKey(
         RecognizedPersonModel,
@@ -46,3 +40,9 @@ class FaceModel(models.Model):
         models.IntegerField(),
         size=4
     )
+
+    objects = FaceQuerySet.as_manager()
+
+    @property
+    def original_person(self):
+        return self._original_person

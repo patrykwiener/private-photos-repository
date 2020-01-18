@@ -47,15 +47,15 @@ class ImageModel(models.Model):
     objects = models.Manager()
     published = PublishedManager()
 
+    def save(self, *args, **kwargs):
+        self._set_slug()
+        super().save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('image:image-post-detail',
                        args=[
                            self.slug
                        ])
-
-    def save(self, *args, **kwargs):
-        self._set_slug()
-        super().save(*args, **kwargs)
 
     def _set_slug(self):
         if not self.slug:
