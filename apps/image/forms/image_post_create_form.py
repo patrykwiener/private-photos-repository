@@ -5,6 +5,10 @@ from apps.image.models.image_model import ImageModel
 
 
 class ImagePostCreateForm(forms.ModelForm):
+    """
+    Represents image post creation form.
+    """
+
     class Meta:
         model = ImageModel
         fields = (
@@ -16,6 +20,7 @@ class ImagePostCreateForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
+        """Initializes faces, latitude and longitude fields with the values given in **kwargs."""
         super().__init__(*args, **kwargs)
         initial = kwargs['initial']
 
@@ -39,6 +44,7 @@ class ImagePostCreateForm(forms.ModelForm):
                                                       initial=initial['longitude'])
 
     body = forms.CharField(widget=forms.Textarea(), max_length=1024, required=False)
+
     datetime_taken = forms.DateTimeField(label='Date time taken', required=False,
                                          widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
                                          input_formats=['%Y-%m-%d %H:%M'])
@@ -49,4 +55,9 @@ class ImagePostCreateForm(forms.ModelForm):
     }))
 
     def get_faces(self):
+        """
+        Image face fields getter.
+
+        :return: image face fields
+        """
         return [field for field in self if 'face_' in field.name]
