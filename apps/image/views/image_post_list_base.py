@@ -37,25 +37,13 @@ class ImagePostListBase(LoginRequiredMixin, ListView):
             self.queryset = self.queryset.filter(facemodel__person__in=[self.person])
 
     def get(self, request, *args, **kwargs):
-        """
-        Applies filtering by tag and person if needed.
-
-        :param request: GET request
-        :param args: args param
-        :param kwargs: kwargs param
-        :return: get response
-        """
+        """Handles GET request. Applies filtering by tag and person if needed."""
         self.filter_by_tag()
         self.filter_by_person()
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        """
-        Appends tag and person objects to context data.
-
-        :param kwargs: kwargs param
-        :return: context data dict
-        """
+        """Returns context data. Appends tag and person objects to context data."""
         context = super().get_context_data(**kwargs)
         context['tag'] = self.tag
         context['person'] = self.person

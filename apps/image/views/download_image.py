@@ -18,8 +18,6 @@ class ImageDownload(LoginRequiredMixin, View):
         Creates response containing requested image. Validates whether the user is allowed to
         download the image.
 
-        :param request: GET request
-        :param kwargs: GET request params
         :return: response containing requested image
         """
         image = get_object_or_404(ImageModel, slug=kwargs['slug'], user=request.user)
