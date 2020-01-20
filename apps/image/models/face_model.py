@@ -1,6 +1,6 @@
 """
-This module contains FaceQuerySet class providing additional queries on FaceModel object set and FaceModel class
-representing a person's face in an image.
+This module contains FaceQuerySet class providing additional queries on FaceModel object set
+and FaceModel class representing a person's face in an image.
 """
 from django.contrib.postgres.fields import ArrayField
 from django.db import models

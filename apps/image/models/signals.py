@@ -1,6 +1,7 @@
 """
 This module contains functions receiving model signals.
-The functions perform RecognizedPersonModel redundant data cleanup."""
+The functions perform RecognizedPersonModel redundant data cleanup.
+"""
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from apps.image.models.face_model import FaceModel

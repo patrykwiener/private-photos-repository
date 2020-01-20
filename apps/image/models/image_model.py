@@ -4,8 +4,8 @@ class representing an image post.
 """
 from django.urls import reverse
 from django.db import models
-from taggit.managers import TaggableManager
 from django.utils.crypto import get_random_string
+from taggit.managers import TaggableManager
 
 from apps.users.models import CustomUser
 
