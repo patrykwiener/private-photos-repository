@@ -38,7 +38,7 @@ class TestShareForm(TestCase):
             initial=initial
         )
 
-        self.assertTrue(form.is_valid())
+        self.assertIs(form.is_valid(), True)
 
     def test_form_empty_data(self):
         form = ImagePostShareForm(
@@ -46,9 +46,9 @@ class TestShareForm(TestCase):
             initial=self.shared_initial
         )
 
-        self.assertFalse(form.is_valid())
+        self.assertIs(form.is_valid(), False)
         self.assertEqual(len(form.errors), 1)
-        self.assertTrue('This field is required.' in form.errors['email'])
+        self.assertIs('This field is required.' in form.errors['email'], True)
 
     def test_form_invalid_data_share_with_yourself(self):
         data = {
@@ -59,9 +59,9 @@ class TestShareForm(TestCase):
             initial=self.shared_initial
         )
 
-        self.assertFalse(form.is_valid())
+        self.assertIs(form.is_valid(), False)
         self.assertEqual(len(form.errors), 1)
-        self.assertTrue('You cannot share an image with yourself.' in form.errors['email'])
+        self.assertIs('You cannot share an image with yourself.' in form.errors['email'], True)
 
     def test_form_invalid_data_fake_email(self):
         data = {
@@ -72,9 +72,9 @@ class TestShareForm(TestCase):
             initial=self.shared_initial
         )
 
-        self.assertFalse(form.is_valid())
+        self.assertIs(form.is_valid(), False)
         self.assertEqual(len(form.errors), 1)
-        self.assertTrue('User with the given email does not exist.' in form.errors['email'])
+        self.assertIs('User with the given email does not exist.' in form.errors['email'], True)
 
     def test_form_invalid_data_share_the_same_image(self):
         data = {
@@ -86,6 +86,6 @@ class TestShareForm(TestCase):
             initial=self.shared_initial
         )
 
-        self.assertFalse(form.is_valid())
+        self.assertIs(form.is_valid(), False)
         self.assertEqual(len(form.errors), 1)
-        self.assertTrue('You\'re already sharing this image with the given user.' in form.errors['email'])
+        self.assertIs('You\'re already sharing this image with the given user.' in form.errors['email'], True)
