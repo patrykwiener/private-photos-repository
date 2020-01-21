@@ -10,7 +10,7 @@ class LocationMapper:
     @classmethod
     def to_original_image(cls,
                           locations: List[Tuple[int]],
-                          original_pic_size: Tuple[int],
+                          original_pic_size: Tuple[int, int],
                           pic_size: Tuple[int]) -> List[Tuple[int]]:
         """
         Maps provided locations to their original values.
