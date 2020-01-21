@@ -11,14 +11,14 @@ class TestImageModel(TestCase):
         cls.model_instance = ImageModel.objects.create()
 
     def test_image_is_assigned_slug_on_creation(self):
-        self.assertTrue(self.model_instance.slug)
-        self.assertTrue(self.model_instance.slug.isnumeric())
+        self.assertIsNotNone(self.model_instance.slug)
+        self.assertIs(self.model_instance.slug.isnumeric(), True)
 
     def test_image_published_manager(self):
         model_query_set_all = ImageModel.objects.all()
         model_query_set_published = ImageModel.published.all()
 
-        self.assertFalse(model_query_set_all.count() == model_query_set_published.count())
+        self.assertIs(model_query_set_all.count() == model_query_set_published.count(), False)
 
         for model_instance in model_query_set_published:
-            self.assertTrue(model_instance.status == ImageModel.PUBLISHED)
+            self.assertIs(model_instance.status == ImageModel.PUBLISHED, True)

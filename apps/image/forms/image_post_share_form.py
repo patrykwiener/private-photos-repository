@@ -1,3 +1,4 @@
+"""This module contains ImagePostShareForm class representing image post share form."""
 from django import forms
 
 from apps.image.models.shared_image_model import SharedImageModel
@@ -5,6 +6,8 @@ from apps.users.models import CustomUser
 
 
 class ImagePostShareForm(forms.Form):
+    """Represents image post share form."""
+
     email = forms.EmailField()
 
     def __init__(self, *args, **kwargs):
@@ -13,6 +16,14 @@ class ImagePostShareForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean_email(self):
+        """
+        Cleans email filed and validates correctness of the provided email.
+
+        @:raises: ValidationError, when user with the given email does not exist or
+                    user tries to share image with himself or
+                    the image has been already shared with the email owner.
+        :return: provided email
+        """
         email = self.cleaned_data.get('email')
         if not CustomUser.objects.filter(email=email).count():
             raise forms.ValidationError('User with the given email does not exist.')

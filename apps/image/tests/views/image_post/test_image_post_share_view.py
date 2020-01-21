@@ -49,4 +49,4 @@ class TestImagePostShareView(TestSingleObjectViewMixin, TestCase):
         self.assertEqual(response.status_code, 302)
 
         shared_query_set = SharedImageModel.objects.filter(recipient=second_user, image=self.get_model_instance())
-        self.assertTrue(shared_query_set.exists())
+        self.assertIs(shared_query_set.exists(), True)

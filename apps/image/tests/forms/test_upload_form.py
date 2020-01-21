@@ -22,10 +22,10 @@ class TestUploadForm(SimpleTestCase):
             'image': content_image
         })
 
-        self.assertTrue(form.is_valid())
+        self.assertIs(form.is_valid(), True)
 
     def test_form_invalid_data(self):
         form = ImageUploadForm(data={})
 
-        self.assertFalse(form.is_valid())
+        self.assertIs(form.is_valid(), False)
         self.assertEqual(len(form.errors), 1)

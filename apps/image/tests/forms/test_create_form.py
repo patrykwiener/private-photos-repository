@@ -24,7 +24,7 @@ class TestCreateForm(TestCase):
     def test_form_blank(self):
         form = ImagePostCreateForm(data={}, initial=self.initial)
 
-        self.assertTrue(form.is_valid())
+        self.assertIs(form.is_valid(), True)
 
     def test_form_full_data(self):
         data = {
@@ -37,4 +37,4 @@ class TestCreateForm(TestCase):
 
         form = ImagePostCreateForm(data=data, initial=self.initial)
 
-        self.assertTrue(form.is_valid())
+        self.assertIs(form.is_valid(), True)

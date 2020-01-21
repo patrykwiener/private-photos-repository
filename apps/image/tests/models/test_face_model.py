@@ -50,7 +50,7 @@ class TestFaceModel(TestCase):
             model_instance.person = another_person
             model_instance.save()
 
-        self.assertTrue(mocked_handler.called)
+        self.assertIs(mocked_handler.called, True)
         self.assertEqual(mocked_handler.call_count, 1)
 
     def test_signal_delete_person_when_unreferenced_post_delete(self):
@@ -60,7 +60,7 @@ class TestFaceModel(TestCase):
             model_instance = FaceModel.objects.get(id=1)
             model_instance.delete()
 
-        self.assertTrue(mocked_handler.called)
+        self.assertIs(mocked_handler.called, True)
         self.assertEqual(mocked_handler.call_count, 1)
 
     def test_delete_person_when_unreferenced(self):
@@ -70,4 +70,4 @@ class TestFaceModel(TestCase):
 
         delete_person_when_unreferenced(person)
 
-        self.assertFalse(RecognizedPersonModel.objects.filter(id=person.id).exists())
+        self.assertIs(RecognizedPersonModel.objects.filter(id=person.id).exists(), False)
