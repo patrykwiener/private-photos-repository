@@ -97,3 +97,19 @@ You are now able to access `localhost:8000` in your browser.
 
 
 ## Tests
+
+Implemented 86 unit tests validating:
+* URL routing,
+* Forms,
+* Models,
+* Views.
+
+To run all tests type in command line pointing to the project root directory:
+
+```bash
+python manage.py test
+```
+## Contact
+Created by [@patrykwiener](https://github.com/patrykwiener). 
+
+Feel free to contact me on [My LinkedIn](https://www.linkedin.com/in/patryk-wiener-439074182/)!
