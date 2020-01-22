@@ -1,6 +1,15 @@
 # Private Photos Repository
 A virtual time capsule providing a private photos repository. The application allows users to create their own set of memorable moments by uploading and widely describing the most precious images.
 
+## Table of Contents
+* [Key Features](#key-features)
+* [Site](#site)
+* [Technologies](#technologies)
+* [Setup](#setup)
+* [Run Server](#run-server)
+* [Tests](#tests)
+* [Contact](#contact)
+
 ## Key Features
 * Face recognition on a newly uploaded image
 * Location where a picture was taken extracted from the image file
@@ -85,7 +94,7 @@ To load sample data with default users `testuser` and `testadmin` with password 
 $ python manage.py loaddata fixtures/sample_data.json
 ```
 
-## Run server
+## Run Server
 
 To run server open command line pointing to the project root directory:
 
