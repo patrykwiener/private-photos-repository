@@ -72,8 +72,8 @@
     "pk": 4,
     "fields": {
       "user": 2,
-      "image": "images/test_image1.jpg",
-      "thumbnail": "thumbnails/test_image1_thumb.jpg",
+      "image": "sample_data/images/test_image1.jpg",
+      "thumbnail": "sample_data/thumbnails/test_image1_thumb.jpg",
       "longitude": "18.933188",
       "latitude": "49.393181",
       "datetime_taken": "2019-10-20T14:38:25Z",
