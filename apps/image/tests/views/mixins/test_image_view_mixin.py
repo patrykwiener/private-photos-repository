@@ -10,7 +10,7 @@ class TestImageViewMixin:
     user = CustomUser.objects.get(username='testadmin')
 
     def login(self):
-        self.client.force_login(self.user)
+        self.client.login(username=self.user.username, password='test')
 
     def test_denies_anonymous(self):
         response = self.client.get(self.get_view_url())
