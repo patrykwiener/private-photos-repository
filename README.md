@@ -113,7 +113,7 @@ Implemented 86 unit tests validating:
 * Models,
 * Views.
 
-To run all tests type in command line pointing to the project root directory:
+To run all tests type the following in command line pointing to the project root directory:
 
 ```bash
 python manage.py test
