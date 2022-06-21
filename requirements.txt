@@ -16,7 +16,7 @@ markdown>=3.1.1
 
 # image libraries
 pillow==6.2.1
-numpy==1.17.3
+numpy==1.22.0
 sqlparse==0.3.0
 cmake==3.15.3
 face_recognition>=1.2.3, <2.0.0
